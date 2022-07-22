@@ -1,45 +1,45 @@
 // @ts-check
 
-const path = require("path");
-const webpack = require("webpack");
+const path = require('path')
+const webpack = require('webpack')
 
 /** @type {import('webpack').Configuration} **/
 const webpackConfig = {
-  devtool: "nosources-source-map",
+  devtool: 'nosources-source-map',
   entry: {
-    extension: "./src/extension.ts",
-    "test/suite/index": "./src/test/suite/index.web.ts",
+    extension: './src/extension.ts',
+    'test/suite/index': './src/test/suite/index.web.ts',
   },
   externals: {
-    vscode: "commonjs vscode",
+    vscode: 'commonjs vscode',
   },
   infrastructureLogging: {
-    level: "log",
+    level: 'log',
   },
-  mode: "none",
+  mode: 'none',
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: [{ loader: "ts-loader" }],
+        use: [{ loader: 'ts-loader' }],
         exclude: /node_modules/,
       },
     ],
   },
   output: {
     clean: true,
-    filename: "[name].js",
-    libraryTarget: "commonjs",
-    path: path.resolve(__dirname, "dist"),
+    filename: '[name].js',
+    libraryTarget: 'commonjs',
+    path: path.resolve(__dirname, 'dist'),
   },
-  plugins: [new webpack.ProvidePlugin({ process: "process/browser" })],
+  plugins: [new webpack.ProvidePlugin({ process: 'process/browser' })],
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: ['.ts', '.js'],
     fallback: {
-      assert: require.resolve("assert"),
+      assert: require.resolve('assert'),
     },
   },
-  target: "webworker",
-};
+  target: 'webworker',
+}
 
-module.exports = [webpackConfig];
+module.exports = [webpackConfig]
