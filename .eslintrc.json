@@ -1,0 +1,6 @@
+{
+  "extends": "@hideoo",
+  "rules": {
+    "unicorn/prefer-node-protocol": "off"
+  }
+}

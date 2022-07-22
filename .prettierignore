@@ -1,0 +1,5 @@
+pnpm-lock.yaml
+dist
+out
+.vscode-test
+.vscode-test-web
