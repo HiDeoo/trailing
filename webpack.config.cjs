@@ -19,6 +19,7 @@ const webpackConfig = {
   },
   mode: 'none',
   module: {
+    exprContextCritical: false,
     rules: [
       {
         test: /\.ts$/,
