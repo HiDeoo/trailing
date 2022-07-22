@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.os }}-playwright
 
       - name: Install Playwright browsers
-        run: pnpm playwright install chromium
+        run: pnpx playwright install chromium
 
       - name: Lint
         run: pnpm lint
