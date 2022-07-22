@@ -51,8 +51,13 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
-      - name: Set Playwright path
+      - name: Set Playwright path (Unix)
+        if: runner.os != 'Windows'
         run: echo "PLAYWRIGHT_BROWSERS_PATH=$HOME/.cache/playwright-bin" >> $GITHUB_ENV
+
+      - name: Set Playwright path (Windows)
+        if: runner.os == 'Windows'
+        run: echo "PLAYWRIGHT_BROWSERS_PATH=$HOME\.cache\playwright-bin" >> $env:GITHUB_ENV
 
       - name: Setup Playwright cache
         uses: actions/cache@v3
