@@ -17,4 +17,15 @@ suite('Trailing Test Suite', () => {
 
       assertDocumentTextEqual(document, 'test')
     }))
+
+  test('should add and remove a comma at the end', () =>
+    withEditor('test', async (document) => {
+      await commands.executeCommand(TrailingCommands.Toggle)
+
+      assertDocumentTextEqual(document, 'test,')
+
+      await commands.executeCommand(TrailingCommands.Toggle)
+
+      assertDocumentTextEqual(document, 'test')
+    }))
 })
