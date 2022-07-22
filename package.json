@@ -1,0 +1,56 @@
+{
+  "name": "trailing",
+  "displayName": "Trailing",
+  "description": "// TODO",
+  "version": "0.0.1",
+  "main": "./dist/extension.js",
+  "browser": "./dist/extension.js",
+  "scripts": {
+    "build": "webpack",
+    "build:test": "tsc -p .",
+    "watch": "webpack --watch",
+    "watch:test": "tsc --watch -p .",
+    "web": "vscode-test-web --extensionDevelopmentPath=.",
+    "lint": "eslint src --ext ts",
+    "pretest": "pnpm build && pnpm build:test",
+    "test": "pnpm test:desktop && pnpm test:web",
+    "test:desktop": "node out/test/runTest.js",
+    "test:web": "pnpm web --extensionTestsPath=dist/test/suite/index.js --headless=true",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "vscode:package": "vsce package",
+    "vscode:prepublish": "pnpm package"
+  },
+  "activationEvents": [
+    "onCommand:trailing.helloWorld"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "trailing.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/glob": "7.2.0",
+    "@types/mocha": "9.1.1",
+    "@types/vscode": "1.69.0",
+    "@types/webpack-env": "1.17.0",
+    "@vscode/test-electron": "2.1.5",
+    "@vscode/test-web": "0.0.29",
+    "assert": "2.0.0",
+    "glob": "8.0.3",
+    "mocha": "10.0.0",
+    "process": "0.11.10",
+    "ts-loader": "9.3.1",
+    "typescript": "4.7.4",
+    "webpack": "5.73.0",
+    "webpack-cli": "4.10.0"
+  },
+  "engines": {
+    "vscode": "^1.69.0"
+  },
+  "categories": [
+    "Other"
+  ]
+}
