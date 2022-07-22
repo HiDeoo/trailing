@@ -59,6 +59,7 @@
   "categories": [
     "Other"
   ],
+  "packageManager": "pnpm@7.4.0",
   "prettier": "@hideoo/prettier-config",
   "lint-staged": {
     "**/*": "prettier -w -u --cache",
