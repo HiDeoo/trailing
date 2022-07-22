@@ -1,6 +1,7 @@
-import * as path from 'path'
-import * as Mocha from 'mocha'
-import * as glob from 'glob'
+import path from 'node:path'
+
+import { glob } from 'glob'
+import Mocha from 'mocha'
 
 import { getMochaOptions, runTests } from '../mocha'
 
@@ -15,7 +16,9 @@ export function run(): Promise<void> {
         return reject(error)
       }
 
-      files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)))
+      for (const file of files) {
+        mocha.addFile(path.resolve(testsRoot, file))
+      }
 
       runTests(mocha, resolve, reject)
     })

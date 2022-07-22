@@ -11,7 +11,7 @@
     "watch": "webpack --watch",
     "watch:test": "tsc --watch -p .",
     "web": "vscode-test-web --extensionDevelopmentPath=.",
-    "lint": "prettier -c . && eslint src --ext ts",
+    "lint": "prettier -c . && eslint . --max-warnings=0",
     "pretest": "pnpm build && pnpm build:test",
     "test": "pnpm test:desktop && pnpm test:web",
     "test:desktop": "node out/test/runTest.js",
@@ -32,6 +32,7 @@
     ]
   },
   "devDependencies": {
+    "@hideoo/eslint-config": "0.3.0",
     "@hideoo/prettier-config": "0.0.1",
     "@types/glob": "7.2.0",
     "@types/mocha": "9.1.1",
@@ -40,6 +41,7 @@
     "@vscode/test-electron": "2.1.5",
     "@vscode/test-web": "0.0.29",
     "assert": "2.0.0",
+    "eslint": "8.20.0",
     "glob": "8.0.3",
     "mocha": "10.0.0",
     "prettier": "2.7.1",
