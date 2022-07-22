@@ -13,7 +13,8 @@ jobs:
     name: Lint & Test
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
+        # os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     # Run on external PRs only as the workflow will be already running for the push event on the branch for internal
     # PRs.
