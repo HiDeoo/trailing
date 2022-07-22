@@ -21,13 +21,13 @@
     "prepare": "husky install"
   },
   "activationEvents": [
-    "onCommand:trailing.helloWorld"
+    "onCommand:trailing.toggle"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "trailing.helloWorld",
-        "title": "Hello World"
+        "command": "trailing.toggle",
+        "title": "// TODO"
       }
     ]
   },

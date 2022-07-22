@@ -1,8 +1,20 @@
-import * as assert from 'assert'
+import { commands } from 'vscode'
+
+import { TrailingCommands } from '../../extension'
+import { assertDocumentTextEqual, withEditor } from '../utils'
 
 suite('Trailing Test Suite', () => {
-  test('should // TODO', () => {
-    // FIXME(HiDeoo)
-    assert.equal(1, 1)
-  })
+  test('should add a comma at the end', () =>
+    withEditor('test', async (document) => {
+      await commands.executeCommand(TrailingCommands.Toggle)
+
+      assertDocumentTextEqual(document, 'test,')
+    }))
+
+  test('should remove a comma at the end', () =>
+    withEditor('test,', async (document) => {
+      await commands.executeCommand(TrailingCommands.Toggle)
+
+      assertDocumentTextEqual(document, 'test')
+    }))
 })
