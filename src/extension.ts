@@ -1,18 +1,24 @@
 import { commands, type ExtensionContext, window, type TextLine } from 'vscode'
 
-export const TrailingCommands = {
-  Toggle: 'trailing.toggle',
+export enum TrailingSymbol {
+  Comma = ',',
 }
+
+export const TrailingDefinitions = new Map<TrailingCommand, TrailingSymbol>([
+  ['trailing.toggleComma', TrailingSymbol.Comma],
+])
 
 export function activate(context: ExtensionContext) {
-  context.subscriptions.push(
-    commands.registerCommand(TrailingCommands.Toggle, () => {
-      return toggle()
-    })
-  )
+  for (const [command, symbol] of TrailingDefinitions) {
+    context.subscriptions.push(
+      commands.registerCommand(command, () => {
+        return toggle(symbol)
+      })
+    )
+  }
 }
 
-function toggle() {
+function toggle(symbol: TrailingSymbol) {
   const editor = window.activeTextEditor
 
   if (!editor) {
@@ -29,13 +35,17 @@ function toggle() {
 
   return editor.edit((editBuilder) => {
     for (const line of lines) {
-      const lastChar = line.text.charAt(line.text.length - 1)
+      const lastChar = line.text.charAt(line.text.length - symbol.length)
 
-      if (lastChar === ',') {
-        editBuilder.delete(line.range.with(line.range.end.with({ character: line.text.length - 1 }), line.range.end))
+      if (lastChar === symbol) {
+        editBuilder.delete(
+          line.range.with(line.range.end.with({ character: line.text.length - symbol.length }), line.range.end)
+        )
       } else {
-        editBuilder.insert(line.range.end, ',')
+        editBuilder.insert(line.range.end, symbol)
       }
     }
   })
 }
+
+export type TrailingCommand = `trailing.toggle${string}`

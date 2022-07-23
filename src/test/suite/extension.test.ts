@@ -1,31 +1,37 @@
 import { commands } from 'vscode'
 
-import { TrailingCommands } from '../../extension'
+import { type TrailingCommand, TrailingDefinitions, type TrailingSymbol } from '../../extension'
 import { assertDocumentTextEqual, withEditor } from '../utils'
 
-suite('Trailing Test Suite', () => {
-  test('should add a comma at the end', () =>
-    withEditor('test', async (document) => {
-      await commands.executeCommand(TrailingCommands.Toggle)
+function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: TrailingSymbol) {
+  suite(`Trailing Symbol '${symbol}'`, () => {
+    test(`should add '${symbol}' at the end`, () =>
+      withEditor('test', async (document) => {
+        await commands.executeCommand(command)
 
-      assertDocumentTextEqual(document, 'test,')
-    }))
+        assertDocumentTextEqual(document, `test${symbol}`)
+      }))
 
-  test('should remove a comma at the end', () =>
-    withEditor('test,', async (document) => {
-      await commands.executeCommand(TrailingCommands.Toggle)
+    test(`should remove '${symbol}' at the end`, () =>
+      withEditor(`test${symbol}`, async (document) => {
+        await commands.executeCommand(command)
 
-      assertDocumentTextEqual(document, 'test')
-    }))
+        assertDocumentTextEqual(document, 'test')
+      }))
 
-  test('should add and remove a comma at the end', () =>
-    withEditor('test', async (document) => {
-      await commands.executeCommand(TrailingCommands.Toggle)
+    test(`should toggle '${symbol}' at the end`, () =>
+      withEditor('test', async (document) => {
+        await commands.executeCommand(command)
 
-      assertDocumentTextEqual(document, 'test,')
+        assertDocumentTextEqual(document, `test${symbol}`)
 
-      await commands.executeCommand(TrailingCommands.Toggle)
+        await commands.executeCommand(command)
 
-      assertDocumentTextEqual(document, 'test')
-    }))
-})
+        assertDocumentTextEqual(document, 'test')
+      }))
+  })
+}
+
+for (const [command, symbol] of TrailingDefinitions) {
+  runTestsWithCommandAndSymbol(command, symbol)
+}
