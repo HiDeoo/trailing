@@ -17,6 +17,6 @@ export function getMochaOptions(): Mocha.MochaOptions {
   return {
     color: true,
     reporter: undefined,
-    ui: 'tdd',
+    ui: 'bdd',
   }
 }

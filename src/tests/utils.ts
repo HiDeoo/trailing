@@ -1,17 +1,13 @@
 import * as assert from 'assert'
 
-import { commands, Position, type TextDocument, type TextEditor, Uri, window, workspace } from 'vscode'
+import { commands, type TextDocument, type TextEditor, window, workspace } from 'vscode'
 
 export async function withEditor(
   content: string,
   run: (doc: TextDocument, editor: TextEditor) => Promise<void> | void
 ) {
-  const document = await workspace.openTextDocument(Uri.parse('untitled:Trailing'))
+  const document = await workspace.openTextDocument({ content })
   const editor = await window.showTextDocument(document)
-
-  await editor.edit((editBuilder) => {
-    editBuilder.insert(new Position(0, 0), content)
-  })
 
   await run(document, editor)
 

@@ -1,6 +1,6 @@
 import 'mocha/mocha'
 
-import { getMochaOptions, runTests } from '../mocha'
+import { getMochaOptions, runTests } from './mocha'
 
 export function run(): Promise<void> {
   return new Promise((resolve, reject) => {
