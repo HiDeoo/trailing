@@ -4,7 +4,7 @@
   "tasks": [
     {
       "type": "npm",
-      "script": "watch",
+      "script": "dev",
       "problemMatcher": ["$ts-webpack-watch"],
       "isBackground": true,
       "group": {
@@ -17,7 +17,7 @@
     },
     {
       "type": "npm",
-      "script": "watch:test",
+      "script": "dev:test",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
       "group": "build",

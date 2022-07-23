@@ -6,10 +6,10 @@
   "main": "./dist/extension.js",
   "browser": "./dist/extension.js",
   "scripts": {
+    "dev": "webpack --watch",
+    "dev:test": "tsc --watch -p .",
     "build": "webpack",
     "build:test": "tsc -p .",
-    "watch": "webpack --watch",
-    "watch:test": "tsc --watch -p .",
     "web": "vscode-test-web --extensionDevelopmentPath=.",
     "lint": "prettier -c . && eslint . --max-warnings=0",
     "test": "pnpm build && pnpm build:test && pnpm test:desktop && pnpm test:web",
