@@ -31,7 +31,18 @@
         "command": "trailing.toggleComma",
         "title": "// TODO"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Trailing",
+      "properties": {
+        "trailing.jumpToSymbol": {
+          "default": false,
+          "description": "// TODO",
+          "scope": "language-overridable",
+          "type": "boolean"
+        }
+      }
+    }
   },
   "devDependencies": {
     "@hideoo/eslint-config": "0.3.0",

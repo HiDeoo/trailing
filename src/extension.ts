@@ -1,4 +1,4 @@
-import { commands, type ExtensionContext, window, type TextLine } from 'vscode'
+import { commands, type ExtensionContext, window, type TextLine, workspace } from 'vscode'
 
 export enum TrailingSymbol {
   Comma = ',',
@@ -18,7 +18,7 @@ export function activate(context: ExtensionContext) {
   }
 }
 
-function toggle(symbol: TrailingSymbol) {
+async function toggle(symbol: TrailingSymbol) {
   const editor = window.activeTextEditor
 
   if (!editor) {
@@ -33,7 +33,7 @@ function toggle(symbol: TrailingSymbol) {
     lines.push(editor.document.lineAt(selection.active.line))
   }
 
-  return editor.edit((editBuilder) => {
+  await editor.edit((editBuilder) => {
     for (const line of lines) {
       const lastChar = line.text.charAt(line.text.length - symbol.length)
 
@@ -46,6 +46,14 @@ function toggle(symbol: TrailingSymbol) {
       }
     }
   })
+
+  const jumpToSymbol = workspace
+    .getConfiguration('trailing', window.activeTextEditor?.document)
+    .get<boolean>('jumpToSymbol', true)
+
+  if (jumpToSymbol) {
+    await commands.executeCommand('cursorEnd')
+  }
 }
 
 export type TrailingCommand = `trailing.toggle${string}`

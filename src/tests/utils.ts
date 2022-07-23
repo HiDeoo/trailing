@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 
-import { commands, type TextDocument, type TextEditor, window, workspace } from 'vscode'
+import { commands, type Position, type Selection, type TextDocument, type TextEditor, window, workspace } from 'vscode'
 
 export async function withEditor(
   content: string,
@@ -14,6 +14,26 @@ export async function withEditor(
   return commands.executeCommand('workbench.action.closeAllEditors')
 }
 
-export function assertDocumentTextEqual(document: TextDocument, expected: string) {
+export function assertTextEqual(document: TextDocument, expected: string) {
   assert.strictEqual(document.getText(), expected)
+}
+
+export function assertPositionEqual(editor: TextEditor, expected: Position) {
+  assert.deepStrictEqual(editor.selection.active, expected)
+}
+
+export function assertSelectionsEqual(editor: TextEditor, expected: Selection) {
+  assert.deepStrictEqual(editor.selection, expected)
+}
+
+export function getTestSettings() {
+  const jumpToSymbol = workspace
+    .getConfiguration('trailing', window.activeTextEditor?.document)
+    .get<boolean>('jumpToSymbol')
+
+  if (typeof jumpToSymbol === 'undefined') {
+    throw new TypeError("Setting 'jumpToSymbol' is not defined.")
+  }
+
+  return { jumpToSymbol }
 }
