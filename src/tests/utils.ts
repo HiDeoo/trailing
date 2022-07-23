@@ -19,11 +19,11 @@ export function assertTextEqual(document: TextDocument, expected: string) {
 }
 
 export function assertPositionEqual(editor: TextEditor, expected: Position) {
-  assert.deepStrictEqual(editor.selection.active, expected)
+  assert.strictEqual(editor.selection.active.isEqual(expected), true)
 }
 
 export function assertSelectionsEqual(editor: TextEditor, expected: Selection) {
-  assert.deepStrictEqual(editor.selection, expected)
+  assert.strictEqual(editor.selection.isEqual(expected), true)
 }
 
 export function getTestSettings() {
