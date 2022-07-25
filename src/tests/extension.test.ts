@@ -349,6 +349,87 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
         }
       ))
+
+    it(`should handle multiple selection on the same line when toggling trailing '${symbol}'`, () =>
+      withEditor(
+        stripIndent`
+          test1 test2 test3
+          test4 test5 test6`,
+        async (document, editor) => {
+          const selections = [
+            new Selection(new Position(0, 0), new Position(0, 4)),
+            new Selection(new Position(0, 6), new Position(0, 10)),
+            new Selection(new Position(0, 12), new Position(0, 16)),
+            new Selection(new Position(1, 2), new Position(1, 4)),
+          ]
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test1 test2 test3${symbol}
+              test4 test5 test6${symbol}`
+          )
+          getTestSettings().jumpToSymbol
+            ? assertSelectionsEqual(editor, [
+                new Selection(new Position(0, 18), new Position(0, 18)),
+                new Selection(new Position(1, 18), new Position(1, 18)),
+              ])
+            : assertSelectionsEqual(editor, selections)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test1 test2 test3
+              test4 test5 test6`
+          )
+          getTestSettings().jumpToSymbol
+            ? assertSelectionsEqual(editor, [
+                new Selection(new Position(0, 17), new Position(0, 17)),
+                new Selection(new Position(1, 17), new Position(1, 17)),
+              ])
+            : assertSelectionsEqual(editor, selections)
+        }
+      ))
+
+    it(`should handle multiple cursors on the same line when toggling trailing '${symbol}'`, () =>
+      withEditor(
+        stripIndent`
+          test1 test2 test3
+          test4 test5 test6`,
+        async (document, editor) => {
+          const positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(1, 2)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test1 test2 test3${symbol}
+              test4 test5 test6${symbol}`
+          )
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(0, 18), new Position(1, 18)])
+            : assertPositionsEqual(editor, positions)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test1 test2 test3
+              test4 test5 test6`
+          )
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(0, 17), new Position(1, 17)])
+            : assertPositionsEqual(editor, positions)
+        }
+      ))
   })
 }
 

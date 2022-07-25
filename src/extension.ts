@@ -28,9 +28,13 @@ async function toggle(symbol: TrailingSymbol) {
   const selections = editor.selections
 
   const lines: TextLine[] = []
+  let lastLineIndex = -1
 
   for (const selection of selections) {
-    lines.push(editor.document.lineAt(selection.active.line))
+    if (lastLineIndex !== selection.active.line) {
+      lines.push(editor.document.lineAt(selection.active.line))
+      lastLineIndex = selection.active.line
+    }
   }
 
   await editor.edit((editBuilder) => {
