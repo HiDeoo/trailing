@@ -1,4 +1,4 @@
-import { commands, type ExtensionContext, window, type TextLine, workspace } from 'vscode'
+import { commands, type ExtensionContext, type Position, Selection, type TextLine, window, workspace } from 'vscode'
 
 export enum TrailingSymbol {
   Comma = ',',
@@ -37,26 +37,41 @@ async function toggle(symbol: TrailingSymbol) {
     }
   }
 
-  await editor.edit((editBuilder) => {
-    for (const line of lines) {
-      const lastChar = line.text.charAt(line.text.length - symbol.length)
-
-      if (lastChar === symbol) {
-        editBuilder.delete(
-          line.range.with(line.range.end.with({ character: line.text.length - symbol.length }), line.range.end)
-        )
-      } else {
-        editBuilder.insert(line.range.end, symbol)
-      }
-    }
-  })
-
   const jumpToSymbol = workspace
     .getConfiguration('trailing', window.activeTextEditor?.document)
     .get<boolean>('jumpToSymbol', true)
 
+  const newCursorPositions: Position[] = []
+
+  await editor.edit((editBuilder) => {
+    for (const line of lines) {
+      const trimmedText = line.text.trimEnd()
+      const trimmedDelta = -1 * (line.text.length - trimmedText.length)
+
+      const lastChar = trimmedText.charAt(trimmedText.length - symbol.length)
+
+      let newCursorPosition: Position
+
+      if (lastChar === symbol) {
+        newCursorPosition = line.range.end.with({ character: trimmedText.length - symbol.length })
+
+        editBuilder.delete(
+          line.range.with(newCursorPosition, line.range.end.translate({ characterDelta: trimmedDelta }))
+        )
+      } else {
+        newCursorPosition = line.range.end.translate({ characterDelta: trimmedDelta + 1 })
+
+        editBuilder.insert(line.range.end.translate({ characterDelta: trimmedDelta }), symbol)
+      }
+
+      if (jumpToSymbol) {
+        newCursorPositions.push(newCursorPosition)
+      }
+    }
+  })
+
   if (jumpToSymbol) {
-    await commands.executeCommand('cursorEnd')
+    editor.selections = newCursorPositions.map((cursorPosition) => new Selection(cursorPosition, cursorPosition))
   }
 }
 
