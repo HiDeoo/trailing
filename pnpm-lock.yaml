@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@hideoo/eslint-config': 0.3.0
   '@hideoo/prettier-config': 0.0.1
+  '@types/common-tags': 1.8.1
   '@types/glob': 7.2.0
   '@types/mocha': 9.1.1
   '@types/vscode': 1.69.0
@@ -10,6 +11,7 @@ specifiers:
   '@vscode/test-electron': 2.1.5
   '@vscode/test-web': 0.0.29
   assert: 2.0.0
+  common-tags: 1.8.2
   concurrently: 7.3.0
   eslint: 8.20.0
   glob: 8.0.3
@@ -26,6 +28,7 @@ specifiers:
 devDependencies:
   '@hideoo/eslint-config': 0.3.0_he2ccbldppg44uulnyq4rwocfa
   '@hideoo/prettier-config': 0.0.1
+  '@types/common-tags': 1.8.1
   '@types/glob': 7.2.0
   '@types/mocha': 9.1.1
   '@types/vscode': 1.69.0
@@ -33,6 +36,7 @@ devDependencies:
   '@vscode/test-electron': 2.1.5
   '@vscode/test-web': 0.0.29
   assert: 2.0.0
+  common-tags: 1.8.2
   concurrently: 7.3.0
   eslint: 8.20.0
   glob: 8.0.3
@@ -286,6 +290,10 @@ packages:
   /@tootallnate/once/2.0.0:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
     engines: {node: '>= 10'}
+    dev: true
+
+  /@types/common-tags/1.8.1:
+    resolution: {integrity: sha512-20R/mDpKSPWdJs5TOpz3e7zqbeCNuMCPhV7Yndk9KU2Rbij2r5W4RzwDPkzC+2lzUqXYu9rFzTktCBnDjHuNQg==}
     dev: true
 
   /@types/eslint-scope/3.7.4:
@@ -1145,6 +1153,11 @@ packages:
   /commander/9.4.0:
     resolution: {integrity: sha512-sRPT+umqkz90UA8M1yqYfnHlZA7fF6nSphDtxeywPZ49ysjxDQybzk13CL+mXekDRG92skbcqCLVovuCusNmFw==}
     engines: {node: ^12.20.0 || >=14}
+    dev: true
+
+  /common-tags/1.8.2:
+    resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
+    engines: {node: '>=4.0.0'}
     dev: true
 
   /concat-map/0.0.1:

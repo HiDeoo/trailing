@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 
-import { commands, type Position, type Selection, type TextDocument, type TextEditor, window, workspace } from 'vscode'
+import { commands, type Position, Selection, type TextDocument, type TextEditor, window, workspace } from 'vscode'
 
 export async function withEditor(
   content: string,
@@ -22,8 +22,19 @@ export function assertPositionEqual(editor: TextEditor, expected: Position) {
   assert.strictEqual(editor.selection.active.isEqual(expected), true)
 }
 
-export function assertSelectionsEqual(editor: TextEditor, expected: Selection) {
+export function assertPositionsEqual(editor: TextEditor, expected: Position[]) {
+  assert.deepStrictEqual(
+    editor.selections,
+    expected.map((expectedPosition) => new Selection(expectedPosition, expectedPosition))
+  )
+}
+
+export function assertSelectionEqual(editor: TextEditor, expected: Selection) {
   assert.strictEqual(editor.selection.isEqual(expected), true)
+}
+
+export function assertSelectionsEqual(editor: TextEditor, expected: Selection[]) {
+  assert.deepStrictEqual(editor.selections, expected)
 }
 
 export function getTestSettings() {
