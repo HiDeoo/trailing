@@ -5,17 +5,17 @@ import { type TrailingCommand, TrailingDefinitions, type TrailingSymbol } from '
 
 import {
   assertPositionEqual,
-  assertTextEqual,
+  assertPositionsEqual,
   assertSelectionEqual,
+  assertSelectionsEqual,
+  assertTextEqual,
   getTestSettings,
   withEditor,
-  assertPositionsEqual,
-  assertSelectionsEqual,
 } from './utils'
 
 function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: TrailingSymbol) {
   describe(`Trailing Symbol '${symbol}'`, () => {
-    it(`should toggle trailing '${symbol}'`, () =>
+    it(`should toggle a trailing '${symbol}'`, () =>
       withEditor('test', async (document, editor) => {
         await commands.executeCommand(command)
 
@@ -28,7 +28,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 4 : 0))
       }))
 
-    it(`should toggle trailing '${symbol}' with the cursor at the end of the line`, () =>
+    it(`should toggle a trailing '${symbol}' with the cursor at the end of the line`, () =>
       withEditor('test', async (document, editor) => {
         let position = new Position(0, 4)
         editor.selection = new Selection(position, position)
@@ -36,10 +36,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         await commands.executeCommand(command)
 
         assertTextEqual(document, `test${symbol}`)
-        // When adding a trailing symbol with the cursor at the end of the line, the cursor will be automatically
-        // moved to the end of the line.
-        // https://github.com/microsoft/vscode/issues/141946
-        assertPositionEqual(editor, new Position(0, 5))
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 5 : 4))
 
         position = new Position(0, 5)
         editor.selection = new Selection(position, position)
@@ -50,9 +47,9 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         assertPositionEqual(editor, new Position(0, 4))
       }))
 
-    it(`should toggle trailing '${symbol}' with a line partially selected`, () =>
+    it(`should toggle a trailing '${symbol}' with a line partially selected`, () =>
       withEditor('test', async (document, editor) => {
-        const initialSelection = new Selection(new Position(0, 0), new Position(0, 2))
+        let initialSelection = new Selection(new Position(0, 0), new Position(0, 2))
         editor.selection = initialSelection
 
         await commands.executeCommand(command)
@@ -62,19 +59,20 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           ? assertPositionEqual(editor, new Position(0, 5))
           : assertSelectionEqual(editor, initialSelection)
 
-        editor.selection = new Selection(new Position(0, 3), new Position(0, 5))
+        initialSelection = new Selection(new Position(0, 3), new Position(0, 5))
+        editor.selection = initialSelection
 
         await commands.executeCommand(command)
 
         assertTextEqual(document, 'test')
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 4))
-          : assertSelectionEqual(editor, new Selection(new Position(0, 3), new Position(0, 4)))
+          : assertSelectionEqual(editor, initialSelection)
       }))
 
-    it(`should toggle trailing '${symbol}' with a line entirely selected`, () =>
+    it(`should toggle a trailing '${symbol}' with a line entirely selected`, () =>
       withEditor('test', async (document, editor) => {
-        const initialSelection = new Selection(new Position(0, 0), new Position(0, 4))
+        let initialSelection = new Selection(new Position(0, 0), new Position(0, 4))
         editor.selection = initialSelection
 
         await commands.executeCommand(command)
@@ -82,22 +80,20 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         assertTextEqual(document, `test${symbol}`)
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 5))
-          : // When adding a trailing symbol with the entire line is selected, the selection will be automatically
-            // expanded.
-            // https://github.com/microsoft/vscode/issues/141946
-            assertSelectionEqual(editor, new Selection(new Position(0, 0), new Position(0, 5)))
+          : assertSelectionEqual(editor, initialSelection)
 
-        editor.selection = new Selection(new Position(0, 0), new Position(0, 5))
+        initialSelection = new Selection(new Position(0, 0), new Position(0, 5))
+        editor.selection = initialSelection
 
         await commands.executeCommand(command)
 
         assertTextEqual(document, 'test')
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 4))
-          : assertSelectionEqual(editor, new Selection(new Position(0, 0), new Position(0, 4)))
+          : assertSelectionEqual(editor, initialSelection)
       }))
 
-    it(`should toggle trailing '${symbol}' with extra whitespaces at the end`, () =>
+    it(`should toggle a trailing '${symbol}' with extra whitespaces at the end`, () =>
       withEditor('test   ', async (document, editor) => {
         await commands.executeCommand(command)
 
@@ -110,15 +106,12 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 4 : 0))
       }))
 
-    it(`should toggle trailing '${symbol}' on empty lines`, () =>
+    it(`should toggle a trailing '${symbol}' on empty lines`, () =>
       withEditor('', async (document, editor) => {
         await commands.executeCommand(command)
 
         assertTextEqual(document, symbol)
-        // When adding a trailing symbol with the cursor at the end of the line, the cursor will be automatically
-        // moved to the end of the line.
-        // https://github.com/microsoft/vscode/issues/141946
-        assertPositionEqual(editor, new Position(0, 1))
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 1 : 0))
 
         await commands.executeCommand(command)
 
@@ -126,7 +119,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         assertPositionEqual(editor, new Position(0, 0))
       }))
 
-    it(`should toggle trailing '${symbol}' on multiple lines`, () =>
+    it(`should toggle a trailing '${symbol}' on multiple lines`, () =>
       withEditor(
         stripIndent`
           test 1
@@ -173,7 +166,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         }
       ))
 
-    it(`should toggle trailing '${symbol}' on multiple lines with the cursor at the end of the lines`, () =>
+    it(`should toggle a trailing '${symbol}' on multiple lines with the cursor at the end of the lines`, () =>
       withEditor(
         stripIndent`
           test 1
@@ -194,12 +187,15 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               test 3
               test test 4${symbol}`
           )
-          // When adding a trailing symbol with the cursor at the end of the line, the cursor will be automatically
-          // moved to the end of the line.
-          // https://github.com/microsoft/vscode/issues/141946
           assertPositionsEqual(
             editor,
-            positions.map((position) => new Position(position.line, position.line % 2 === 0 ? 7 : 12))
+            positions.map(
+              (position) =>
+                new Position(
+                  position.line,
+                  getTestSettings().jumpToSymbol ? (position.line % 2 === 0 ? 7 : 12) : position.line % 2 === 0 ? 6 : 11
+                )
+            )
           )
 
           await commands.executeCommand(command)
@@ -219,7 +215,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         }
       ))
 
-    it(`should toggle trailing '${symbol}' on multiple lines with some lines partially selected`, () =>
+    it(`should toggle a trailing '${symbol}' on multiple lines with some lines partially selected`, () =>
       withEditor(
         stripIndent`
           test test 1
@@ -276,7 +272,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         }
       ))
 
-    it(`should toggle trailing '${symbol}' on multiple lines with some lines entirely selected`, () =>
+    it(`should toggle a trailing '${symbol}' on multiple lines with some lines entirely selected`, () =>
       withEditor(
         stripIndent`
           test 1
@@ -303,13 +299,12 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
           assertSelectionsEqual(
             editor,
-            selections.map((selection) => {
-              const position = new Position(selection.start.line, selection.start.line % 2 === 0 ? 7 : 12)
-              // When adding a trailing symbol with the entire line is selected, the selection will be automatically
-              // expanded.
-              // https://github.com/microsoft/vscode/issues/141946
-              return new Selection(getTestSettings().jumpToSymbol ? position : selection.start, position)
-            })
+            getTestSettings().jumpToSymbol
+              ? selections.map((selection) => {
+                  const position = new Position(selection.start.line, selection.start.line % 2 === 0 ? 7 : 12)
+                  return new Selection(position, position)
+                })
+              : selections
           )
 
           await commands.executeCommand(command)
@@ -324,15 +319,17 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
           assertSelectionsEqual(
             editor,
-            selections.map((selection) => {
-              const position = new Position(selection.start.line, selection.start.line % 2 === 0 ? 6 : 11)
-              return new Selection(getTestSettings().jumpToSymbol ? position : selection.start, position)
-            })
+            getTestSettings().jumpToSymbol
+              ? selections.map((selection) => {
+                  const position = new Position(selection.start.line, selection.start.line % 2 === 0 ? 6 : 11)
+                  return new Selection(position, position)
+                })
+              : selections
           )
         }
       ))
 
-    it(`should add and remove trailing '${symbol}' at the same time on multiple lines`, () =>
+    it(`should add and remove a trailing '${symbol}' at the same time on multiple lines`, () =>
       withEditor(
         stripIndent`
           test test 1
@@ -463,5 +460,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 }
 
 for (const [command, symbol] of TrailingDefinitions) {
-  runTestsWithCommandAndSymbol(command, symbol)
+  if (!command.endsWith('WithNewLine')) {
+    runTestsWithCommandAndSymbol(command, symbol)
+  }
 }

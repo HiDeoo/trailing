@@ -1,4 +1,4 @@
-import { commands, type ExtensionContext, type Position, Selection, type TextLine, window, workspace } from 'vscode'
+import { commands, type ExtensionContext, Selection, window, workspace } from 'vscode'
 
 export enum TrailingSymbol {
   Comma = ',',
@@ -26,53 +26,68 @@ async function toggle(symbol: TrailingSymbol) {
   }
 
   const selections = editor.selections
-
-  const lines: TextLine[] = []
-  let lastLineIndex = -1
-
-  for (const selection of selections) {
-    if (lastLineIndex !== selection.active.line) {
-      lines.push(editor.document.lineAt(selection.active.line))
-      lastLineIndex = selection.active.line
-    }
-  }
+  const newSelections: Selection[] = []
+  let lastHandledLineIndex = -1
 
   const jumpToSymbol = workspace
     .getConfiguration('trailing', window.activeTextEditor?.document)
     .get<boolean>('jumpToSymbol', true)
 
-  const newCursorPositions: Position[] = []
+  // const newCursorPositions: Position[] = []
 
-  await editor.edit((editBuilder) => {
-    for (const line of lines) {
+  await editor.edit(async (editBuilder) => {
+    for (const selection of selections) {
+      const lineIndex = selection.active.line
+
+      if (lastHandledLineIndex === lineIndex) {
+        if (!jumpToSymbol) {
+          newSelections.push(selection)
+        }
+
+        continue
+      }
+
+      lastHandledLineIndex = lineIndex
+
+      const line = editor.document.lineAt(selection.active.line)
+
       const trimmedText = line.text.trimEnd()
       const trimmedDelta = -1 * (line.text.length - trimmedText.length)
 
       const lastChar = trimmedText.charAt(trimmedText.length - symbol.length)
 
-      let newCursorPosition: Position
-
       if (lastChar === symbol) {
-        newCursorPosition = line.range.end.with({ character: trimmedText.length - symbol.length })
-
-        editBuilder.delete(
-          line.range.with(newCursorPosition, line.range.end.translate({ characterDelta: trimmedDelta }))
+        const removedSelection = new Selection(
+          line.range.end.translate({ characterDelta: trimmedDelta - 1 }),
+          line.range.end.translate({ characterDelta: trimmedDelta })
         )
+
+        if (jumpToSymbol) {
+          newSelections.push(new Selection(removedSelection.start, removedSelection.start))
+        } else {
+          if (selection.end.isEqual(selection.start) && selection.end.character === line.text.length) {
+            const newPosition = selection.end.translate({ characterDelta: -1 })
+            newSelections.push(trimmedDelta === 0 ? new Selection(newPosition, newPosition) : selection)
+          } else {
+            newSelections.push(selection)
+          }
+        }
+
+        editBuilder.replace(removedSelection, '')
       } else {
-        newCursorPosition = line.range.end.translate({ characterDelta: trimmedDelta + 1 })
+        if (jumpToSymbol) {
+          const newPosition = selection.active.with({ character: line.range.end.character + 1 + trimmedDelta })
+          newSelections.push(new Selection(newPosition, newPosition))
+        } else {
+          newSelections.push(selection)
+        }
 
-        editBuilder.insert(line.range.end.translate({ characterDelta: trimmedDelta }), symbol)
-      }
-
-      if (jumpToSymbol) {
-        newCursorPositions.push(newCursorPosition)
+        editBuilder.replace(line.range.end.translate({ characterDelta: trimmedDelta }), symbol)
       }
     }
   })
 
-  if (jumpToSymbol) {
-    editor.selections = newCursorPositions.map((cursorPosition) => new Selection(cursorPosition, cursorPosition))
-  }
+  editor.selections = newSelections
 }
 
-export type TrailingCommand = `trailing.toggle${string}`
+export type TrailingCommand = `trailing.toggle${string}${typeof commandWithNewLineSuffix | ''}`
