@@ -108,12 +108,22 @@ async function toggle(symbol: TrailingSymbol, addNewLine: boolean) {
 
         editBuilder.replace(removedSelection, '')
       } else {
+        let lead = ''
+
+        if (addNewLine) {
+          const matches = trimmedText.match(/^(?<lead>\s*)/)
+
+          if (matches?.groups?.lead && matches.groups.lead.length > 0) {
+            lead = matches.groups.lead
+          }
+        }
+
         if (jumpToSymbol) {
           const newPosition = addNewLine
             ? // If we're jumping to the symbol and adding a new line, we need to position the cursor at the beginning
               // of this new line.
               selection.active.with({
-                character: 0,
+                character: lead.length,
                 line: line.lineNumber + ++newLineCount,
               })
             : // If we're jumping to the symbol and not adding a new line, we need to position the cursor after the
@@ -140,7 +150,7 @@ async function toggle(symbol: TrailingSymbol, addNewLine: boolean) {
         editBuilder.replace(line.range.end.translate({ characterDelta: trimmedDelta }), symbol)
 
         if (addNewLine) {
-          editBuilder.replace(line.range.end, '\n')
+          editBuilder.replace(line.range.end, `\n${lead}`)
         }
       }
     }

@@ -54,6 +54,23 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             `
           )
           assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(0, 6) : new Position(0, 0))
+
+          await replaceEditorContent(editor, '\ttest 1\n\ttest 2')
+
+          const position = new Position(0, 1)
+          editor.selection = new Selection(position, position)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, `\ttest 1${symbol}\n\t\n\ttest 2`)
+          assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(1, 1) : position)
+
+          editor.selection = new Selection(position, position)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest 1\n\t\n\ttest 2')
+          assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(0, 7) : position)
         }
       ))
 
@@ -100,6 +117,23 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             `
           )
           assertPositionEqual(editor, new Position(0, 6))
+
+          await replaceEditorContent(editor, '  test 1\n  test 2')
+
+          position = new Position(0, 8)
+          editor.selection = new Selection(position, position)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, `  test 1${symbol}\n  \n  test 2`)
+          assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(1, 2) : position)
+
+          editor.selection = new Selection(position, position)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '  test 1\n  \n  test 2')
+          assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(0, 8) : position)
         }
       ))
 
@@ -149,6 +183,26 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
           getTestSettings().jumpToSymbol
             ? assertPositionEqual(editor, new Position(0, 6))
+            : assertSelectionEqual(editor, selection)
+
+          await replaceEditorContent(editor, '\t\ttest 1\n\t\ttest 2')
+
+          selection = new Selection(new Position(0, 3), new Position(0, 6))
+          editor.selection = selection
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, `\t\ttest 1${symbol}\n\t\t\n\t\ttest 2`)
+          getTestSettings().jumpToSymbol
+            ? assertPositionEqual(editor, new Position(1, 2))
+            : assertSelectionEqual(editor, selection)
+
+          editor.selection = selection
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\t\ttest 1\n\t\t\n\t\ttest 2')
+          getTestSettings().jumpToSymbol
+            ? assertPositionEqual(editor, new Position(0, 8))
             : assertSelectionEqual(editor, selection)
         }
       ))
@@ -200,6 +254,28 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           getTestSettings().jumpToSymbol
             ? assertPositionEqual(editor, new Position(0, 6))
             : assertSelectionEqual(editor, new Selection(new Position(0, 0), new Position(0, 6)))
+
+          await replaceEditorContent(editor, '\ttest 1\n\ttest 2')
+
+          selection = new Selection(new Position(0, 0), new Position(0, 7))
+          editor.selection = selection
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, `\ttest 1${symbol}\n\t\n\ttest 2`)
+          getTestSettings().jumpToSymbol
+            ? assertPositionEqual(editor, new Position(1, 1))
+            : assertSelectionEqual(editor, selection)
+
+          selection = new Selection(new Position(0, 0), new Position(0, 8))
+          editor.selection = selection
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest 1\n\t\n\ttest 2')
+          getTestSettings().jumpToSymbol
+            ? assertPositionEqual(editor, new Position(0, 7))
+            : assertSelectionEqual(editor, new Selection(new Position(0, 0), new Position(0, 7)))
         }
       ))
 
@@ -216,6 +292,21 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         assertTextEqual(document, `test 1   \ntest 2`)
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 6 : 0))
+
+        await replaceEditorContent(editor, '\ttest 1   \n\ttest 2')
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, `\ttest 1${symbol}   \n\t\n\ttest 2`)
+        assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(1, 1) : new Position(0, 0))
+
+        const position = new Position(0, 0)
+        editor.selection = new Selection(position, position)
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, '\ttest 1   \n\t\n\ttest 2')
+        assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(0, 7) : position)
       }))
 
     it(`should toggle a trailing '${symbol}' on empty lines`, () =>
@@ -291,6 +382,32 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             editor,
             getTestSettings().jumpToSymbol ? [new Position(0, 6), new Position(3, 6), new Position(5, 11)] : positions
           )
+
+          await replaceEditorContent(editor, '\ttest 1\n\ttest 2\n\ttest 3\n\ttest 4')
+
+          positions = [new Position(0, 0), new Position(2, 2), new Position(3, 7)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, `\ttest 1${symbol}\n\t\n\ttest 2\n\ttest 3${symbol}\n\t\n\ttest 4${symbol}\n\t`)
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [new Position(1, 1), new Position(4, 1), new Position(6, 1)]
+              : [new Position(0, 0), new Position(3, 2), new Position(5, 7)]
+          )
+
+          positions = [new Position(0, 0), new Position(3, 2), new Position(5, 7)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest 1\n\t\n\ttest 2\n\ttest 3\n\t\n\ttest 4\n\t')
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol ? [new Position(0, 7), new Position(3, 7), new Position(5, 7)] : positions
+          )
         }
       ))
 
@@ -345,6 +462,35 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             `
           )
           assertPositionsEqual(editor, [new Position(0, 6), new Position(2, 11), new Position(4, 6)])
+
+          await replaceEditorContent(editor, '\ttest 1\n\ttest test 2\n\ttest 3\n\ttest test 4')
+
+          positions = [new Position(0, 6), new Position(1, 11), new Position(2, 6)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            `\ttest 1${symbol}\n\t\n\ttest test 2${symbol}\n\t\n\ttest 3${symbol}\n\t\n\ttest test 4`
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [new Position(1, 1), new Position(3, 1), new Position(5, 1)]
+              : [new Position(0, 6), new Position(2, 11), new Position(4, 6)]
+          )
+
+          positions = [new Position(0, 7), new Position(2, 12), new Position(4, 7)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest 1\n\t\n\ttest test 2\n\t\n\ttest 3\n\t\n\ttest test 4')
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol ? [new Position(0, 7), new Position(2, 12), new Position(4, 7)] : positions
+          )
         }
       ))
 
@@ -406,6 +552,37 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 11), new Position(2, 6), new Position(4, 11)])
+            : assertSelectionsEqual(editor, selections)
+
+          await replaceEditorContent(editor, '\ttest 1\n\ttest 2\n\ttest 3\n\ttest 4')
+
+          selections = [
+            new Selection(new Position(0, 0), new Position(0, 4)),
+            new Selection(new Position(1, 1), new Position(1, 1)),
+            new Selection(new Position(2, 1), new Position(2, 7)),
+          ]
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          selections = [
+            new Selection(new Position(0, 0), new Position(0, 4)),
+            new Selection(new Position(2, 1), new Position(2, 1)),
+            new Selection(new Position(4, 1), new Position(4, 7)),
+          ]
+
+          assertTextEqual(document, `\ttest 1${symbol}\n\t\n\ttest 2${symbol}\n\t\n\ttest 3${symbol}\n\t\n\ttest 4`)
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(1, 1), new Position(3, 1), new Position(5, 1)])
+            : assertSelectionsEqual(editor, selections)
+
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest 1\n\t\n\ttest 2\n\t\n\ttest 3\n\t\n\ttest 4')
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(0, 7), new Position(2, 7), new Position(4, 7)])
             : assertSelectionsEqual(editor, selections)
         }
       ))
@@ -472,6 +649,40 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 6), new Position(3, 6), new Position(5, 11)])
             : assertSelectionsEqual(editor, selections)
+
+          await replaceEditorContent(editor, '\ttest 1\n\ttest test 2\n\ttest 3\n\ttest test 4')
+
+          selections = [
+            new Selection(new Position(0, 0), new Position(0, 6)),
+            new Selection(new Position(2, 0), new Position(2, 6)),
+            new Selection(new Position(3, 0), new Position(3, 11)),
+          ]
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          selections = [
+            new Selection(new Position(0, 0), new Position(0, 6)),
+            new Selection(new Position(3, 0), new Position(3, 6)),
+            new Selection(new Position(5, 0), new Position(5, 11)),
+          ]
+
+          assertTextEqual(
+            document,
+            `\ttest 1${symbol}\n\t\n\ttest test 2\n\ttest 3${symbol}\n\t\n\ttest test 4${symbol}\n\t`
+          )
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(1, 1), new Position(4, 1), new Position(6, 1)])
+            : assertSelectionsEqual(editor, selections)
+
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest 1\n\t\n\ttest test 2\n\ttest 3\n\t\n\ttest test 4\n\t')
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(0, 7), new Position(3, 7), new Position(5, 12)])
+            : assertSelectionsEqual(editor, selections)
         }
       ))
 
@@ -535,6 +746,38 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               ? [new Position(0, 11), new Position(3, 0), new Position(4, 11), new Position(7, 0)]
               : [new Position(0, 0), new Position(2, 2), new Position(4, 7), new Position(6, 3)]
           )
+
+          await replaceEditorContent(editor, '\ttest test 1\n\ttest 2,\n\t\ttest test 3\n\ttest 4,')
+
+          positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          positions = [new Position(0, 0), new Position(2, 2), new Position(3, 7), new Position(5, 3)]
+
+          assertTextEqual(document, `\ttest test 1${symbol}\n\t\n\ttest 2\n\t\ttest test 3${symbol}\n\t\t\n\ttest 4`)
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [new Position(1, 1), new Position(2, 7), new Position(4, 2), new Position(5, 7)]
+              : positions
+          )
+
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            `\ttest test 1\n\t\n\ttest 2${symbol}\n\t\n\t\ttest test 3\n\t\t\n\ttest 4${symbol}\n\t`
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [new Position(0, 12), new Position(3, 1), new Position(4, 13), new Position(7, 1)]
+              : [new Position(0, 0), new Position(2, 2), new Position(4, 7), new Position(6, 3)]
+          )
         }
       ))
 
@@ -594,6 +837,42 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 17), new Position(2, 17)])
             : assertSelectionsEqual(editor, selections)
+
+          await replaceEditorContent(editor, '\ttest1 test2 test3\n\ttest4 test5 test6\n\ttest 7 test8 test9')
+
+          selections = [
+            new Selection(new Position(0, 0), new Position(0, 4)),
+            new Selection(new Position(0, 6), new Position(0, 10)),
+            new Selection(new Position(0, 12), new Position(0, 16)),
+            new Selection(new Position(1, 2), new Position(1, 4)),
+          ]
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          selections = [
+            new Selection(new Position(0, 0), new Position(0, 4)),
+            new Selection(new Position(0, 6), new Position(0, 10)),
+            new Selection(new Position(0, 12), new Position(0, 16)),
+            new Selection(new Position(2, 2), new Position(2, 4)),
+          ]
+
+          assertTextEqual(
+            document,
+            `\ttest1 test2 test3${symbol}\n\t\n\ttest4 test5 test6${symbol}\n\t\n\ttest 7 test8 test9`
+          )
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(1, 1), new Position(3, 1)])
+            : assertSelectionsEqual(editor, selections)
+
+          editor.selections = selections
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest1 test2 test3\n\t\n\ttest4 test5 test6\n\t\n\ttest 7 test8 test9')
+          getTestSettings().jumpToSymbol
+            ? assertPositionsEqual(editor, [new Position(0, 18), new Position(2, 18)])
+            : assertSelectionsEqual(editor, selections)
         }
       ))
 
@@ -622,9 +901,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               test7 test8 test9
             `
           )
-          getTestSettings().jumpToSymbol
-            ? assertPositionsEqual(editor, [new Position(1, 0), new Position(3, 0)])
-            : assertPositionsEqual(editor, positions)
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol ? [new Position(1, 0), new Position(3, 0)] : positions
+          )
 
           editor.selections = positions.map((position) => new Selection(position, position))
 
@@ -640,9 +920,38 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               test7 test8 test9
             `
           )
-          getTestSettings().jumpToSymbol
-            ? assertPositionsEqual(editor, [new Position(0, 17), new Position(2, 17)])
-            : assertPositionsEqual(editor, positions)
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol ? [new Position(0, 17), new Position(2, 17)] : positions
+          )
+
+          await replaceEditorContent(editor, '\ttest1 test2 test3\n\ttest4 test5 test6\n\ttest 7 test8 test9')
+
+          positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(1, 2)]
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(2, 2)]
+
+          assertTextEqual(
+            document,
+            `\ttest1 test2 test3${symbol}\n\t\n\ttest4 test5 test6${symbol}\n\t\n\ttest 7 test8 test9`
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol ? [new Position(1, 1), new Position(3, 1)] : positions
+          )
+
+          editor.selections = positions.map((position) => new Selection(position, position))
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(document, '\ttest1 test2 test3\n\t\n\ttest4 test5 test6\n\t\n\ttest 7 test8 test9')
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol ? [new Position(0, 18), new Position(2, 18)] : positions
+          )
         }
       ))
   })
