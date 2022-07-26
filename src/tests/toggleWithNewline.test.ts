@@ -10,6 +10,7 @@ import {
   assertSelectionsEqual,
   assertTextEqual,
   getCommands,
+  getSelectionsFromPositions,
   getTestSettings,
   replaceEditorContent,
   withEditor,
@@ -336,7 +337,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           let positions = [new Position(0, 0), new Position(2, 2), new Position(3, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -361,7 +362,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
 
           positions = [new Position(0, 0), new Position(3, 2), new Position(5, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -386,7 +387,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           await replaceEditorContent(editor, '\ttest 1\n\ttest 2\n\ttest 3\n\ttest 4')
 
           positions = [new Position(0, 0), new Position(2, 2), new Position(3, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -399,7 +400,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
 
           positions = [new Position(0, 0), new Position(3, 2), new Position(5, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -421,7 +422,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           let positions = [new Position(0, 6), new Position(1, 11), new Position(2, 6)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -445,7 +446,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
 
           positions = [new Position(0, 7), new Position(2, 12), new Position(4, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -466,7 +467,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           await replaceEditorContent(editor, '\ttest 1\n\ttest test 2\n\ttest 3\n\ttest test 4')
 
           positions = [new Position(0, 6), new Position(1, 11), new Position(2, 6)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -482,7 +483,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
 
           positions = [new Position(0, 7), new Position(2, 12), new Position(4, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -697,7 +698,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           let positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -722,7 +723,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               : positions
           )
 
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -750,7 +751,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           await replaceEditorContent(editor, '\ttest test 1\n\ttest 2,\n\t\ttest test 3\n\ttest 4,')
 
           positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -764,7 +765,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               : positions
           )
 
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -885,7 +886,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           let positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(1, 2)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -906,7 +907,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             getTestSettings().jumpToSymbol ? [new Position(1, 0), new Position(3, 0)] : positions
           )
 
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -928,7 +929,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           await replaceEditorContent(editor, '\ttest1 test2 test3\n\ttest4 test5 test6\n\ttest 7 test8 test9')
 
           positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(1, 2)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -943,7 +944,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             getTestSettings().jumpToSymbol ? [new Position(1, 1), new Position(3, 1)] : positions
           )
 
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 

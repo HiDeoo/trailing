@@ -10,6 +10,7 @@ import {
   assertSelectionsEqual,
   assertTextEqual,
   getCommands,
+  getSelectionsFromPositions,
   getTestSettings,
   withEditor,
 } from './utils'
@@ -130,7 +131,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           const positions = [new Position(0, 0), new Position(2, 2), new Position(3, 7)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -180,7 +181,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           const positions = [new Position(0, 6), new Position(1, 11), new Position(3, 11)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -352,7 +353,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           const positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 
@@ -443,7 +444,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         `,
         async (document, editor) => {
           const positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(1, 2)]
-          editor.selections = positions.map((position) => new Selection(position, position))
+          editor.selections = getSelectionsFromPositions(positions)
 
           await commands.executeCommand(command)
 

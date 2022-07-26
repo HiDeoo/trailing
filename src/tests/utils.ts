@@ -16,6 +16,10 @@ export async function withEditor(
   return commands.executeCommand('workbench.action.closeAllEditors')
 }
 
+export function getSelectionsFromPositions(positions: Position[]) {
+  return positions.map((position) => new Selection(position, position))
+}
+
 export async function replaceEditorContent(editor: TextEditor, content: string) {
   await editor.edit((editBuilder) => {
     const doc = editor.document
