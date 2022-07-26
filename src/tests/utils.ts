@@ -1,6 +1,8 @@
 import * as assert from 'assert'
 
-import { commands, type Position, Selection, type TextDocument, type TextEditor, window, workspace } from 'vscode'
+import { commands, Position, Selection, type TextDocument, type TextEditor, window, workspace, Range } from 'vscode'
+
+import { commandWithNewLineSuffix, TrailingDefinitions } from '../extension'
 
 export async function withEditor(
   content: string,
@@ -12,6 +14,17 @@ export async function withEditor(
   await run(document, editor)
 
   return commands.executeCommand('workbench.action.closeAllEditors')
+}
+
+export async function replaceEditorContent(editor: TextEditor, content: string) {
+  await editor.edit((editBuilder) => {
+    const doc = editor.document
+
+    editBuilder.replace(new Range(doc.lineAt(0).range.start, doc.lineAt(doc.lineCount - 1).range.end), content)
+  })
+
+  const position = new Position(0, 0)
+  editor.selection = new Selection(position, position)
 }
 
 export function assertTextEqual(document: TextDocument, expected: string) {
@@ -35,6 +48,12 @@ export function assertSelectionEqual(editor: TextEditor, expected: Selection) {
 
 export function assertSelectionsEqual(editor: TextEditor, expected: Selection[]) {
   assert.deepStrictEqual(editor.selections, expected)
+}
+
+export function getCommands(withNewLine: boolean) {
+  return [...TrailingDefinitions].filter(([command]) => {
+    return command.endsWith(commandWithNewLineSuffix) === withNewLine
+  })
 }
 
 export function getTestSettings() {

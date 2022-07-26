@@ -23,12 +23,17 @@
     "prepare": "husky install"
   },
   "activationEvents": [
-    "onCommand:trailing.toggleComma"
+    "onCommand:trailing.toggleComma",
+    "onCommand:trailing.toggleCommaWithNewLine"
   ],
   "contributes": {
     "commands": [
       {
         "command": "trailing.toggleComma",
+        "title": "// TODO"
+      },
+      {
+        "command": "trailing.toggleCommaWithNewLine",
         "title": "// TODO"
       }
     ],
