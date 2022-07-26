@@ -11,6 +11,8 @@ export const TrailingDefinitions = new Map<TrailingCommand, TrailingSymbol>([
   [`trailing.toggleComma${commandWithNewLineSuffix}`, TrailingSymbol.Comma],
 ])
 
+const leadRegExp = /^(?<lead>\s*)/
+
 export function activate(context: ExtensionContext) {
   for (const [command, symbol] of TrailingDefinitions) {
     context.subscriptions.push(
@@ -111,7 +113,7 @@ async function toggle(symbol: TrailingSymbol, addNewLine: boolean) {
         let lead = ''
 
         if (addNewLine) {
-          const matches = trimmedText.match(/^(?<lead>\s*)/)
+          const matches = trimmedText.match(leadRegExp)
 
           if (matches?.groups?.lead && matches.groups.lead.length > 0) {
             lead = matches.groups.lead
