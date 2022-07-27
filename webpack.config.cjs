@@ -34,6 +34,10 @@ const webpackConfig = {
     libraryTarget: 'commonjs',
     path: path.resolve(__dirname, 'dist'),
   },
+  performance: {
+    // Skip performance recommendations for maps and tests.
+    assetFilter: (assetFilename) => !/\.map$/.test(assetFilename) && !assetFilename.startsWith('tests'),
+  },
   plugins: [new webpack.ProvidePlugin({ process: 'process/browser' })],
   resolve: {
     extensions: ['.ts', '.js'],
