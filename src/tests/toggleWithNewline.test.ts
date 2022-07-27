@@ -10,6 +10,7 @@ import {
   assertSelectionsEqual,
   assertTextEqual,
   getCommands,
+  getEditor,
   getSelectionsFromPositions,
   getTestSettings,
   replaceEditorContent,
@@ -74,6 +75,40 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(0, 7) : position)
         }
       ))
+
+    it(`should toggle a trailing '${symbol}' with comments on the line`, async () => {
+      const { document, editor } = await getEditor()
+
+      const tests: [before: string, after: string, firstJumpPosition: number, secondJumpPosition: number][] = [
+        ['test // ignore', `test${symbol} // ignore\n`, 0, 4],
+        ['test     // ignore', `test${symbol}     // ignore\n`, 0, 4],
+        ['\ttest // ignore', `\ttest${symbol} // ignore\n\t`, 1, 5],
+        ['test // ignore // ignore\t', `test${symbol} // ignore // ignore\t\n`, 0, 4],
+        ['test /* ignore */', `test${symbol} /* ignore */\n`, 0, 4],
+        ['test /* do not ignore */ test', `test /* do not ignore */ test${symbol}\n`, 0, 29],
+        ['test /* do not ignore */ test // ignore', `test /* do not ignore */ test${symbol} // ignore\n`, 0, 29],
+      ]
+
+      for (const [before, after, firstJumpPosition, secondJumpPosition] of tests) {
+        await replaceEditorContent(editor, before)
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, after)
+        assertPositionEqual(
+          editor,
+          getTestSettings().jumpToSymbol ? new Position(1, firstJumpPosition) : new Position(0, 0)
+        )
+
+        const position = new Position(0, 0)
+        editor.selection = new Selection(position, position)
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, after.replace(symbol, ''))
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? secondJumpPosition : 0))
+      }
+    })
 
     it(`should toggle a trailing '${symbol}' with the cursor at the end of the line`, () =>
       withEditor(
@@ -778,6 +813,102 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             getTestSettings().jumpToSymbol
               ? [new Position(0, 12), new Position(3, 1), new Position(4, 13), new Position(7, 1)]
               : [new Position(0, 0), new Position(2, 2), new Position(4, 7), new Position(6, 3)]
+          )
+        }
+      ))
+
+    it(`should toggle a trailing '${symbol}' on multiple lines with comments on the lines`, () =>
+      withEditor(
+        stripIndent`
+          test // ignore
+          test     // ignore
+          test // ignore // ignore
+          test /* ignore */
+          test /* do not ignore */ test
+          test /* do not ignore */ test // ignore
+          test
+        `,
+        async (document, editor) => {
+          let positions = [
+            new Position(0, 0),
+            new Position(1, 2),
+            new Position(2, 4),
+            new Position(3, 3),
+            new Position(4, 0),
+            new Position(5, 1),
+          ]
+          editor.selections = getSelectionsFromPositions(positions)
+
+          await commands.executeCommand(command)
+
+          positions = positions.map((position, index) => new Position(position.line + 1 * index, position.character))
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test${symbol} // ignore
+
+              test${symbol}     // ignore
+
+              test${symbol} // ignore // ignore
+
+              test${symbol} /* ignore */
+
+              test /* do not ignore */ test${symbol}
+
+              test /* do not ignore */ test${symbol} // ignore
+
+              test
+            `
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [
+                  new Position(1, 0),
+                  new Position(3, 0),
+                  new Position(5, 0),
+                  new Position(7, 0),
+                  new Position(9, 0),
+                  new Position(11, 0),
+                ]
+              : positions
+          )
+
+          editor.selections = getSelectionsFromPositions(positions)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test // ignore
+
+              test     // ignore
+
+              test // ignore // ignore
+
+              test /* ignore */
+
+              test /* do not ignore */ test
+
+              test /* do not ignore */ test // ignore
+
+              test
+            `
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [
+                  new Position(0, 4),
+                  new Position(2, 4),
+                  new Position(4, 4),
+                  new Position(6, 4),
+                  new Position(8, 29),
+                  new Position(10, 29),
+                ]
+              : positions
           )
         }
       ))

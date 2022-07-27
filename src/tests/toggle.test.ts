@@ -10,8 +10,10 @@ import {
   assertSelectionsEqual,
   assertTextEqual,
   getCommands,
+  getEditor,
   getSelectionsFromPositions,
   getTestSettings,
+  replaceEditorContent,
   withEditor,
 } from './utils'
 
@@ -29,6 +31,34 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         assertTextEqual(document, 'test')
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 4 : 0))
       }))
+
+    it(`should toggle a trailing '${symbol}' with comments on the line`, async () => {
+      const { document, editor } = await getEditor()
+
+      const tests: [before: string, after: string, jumpPosition: number][] = [
+        ['test // ignore', `test${symbol} // ignore`, 5],
+        ['test     // ignore', `test${symbol}     // ignore`, 5],
+        ['\ttest // ignore', `\ttest${symbol} // ignore`, 6],
+        ['test // ignore // ignore\t', `test${symbol} // ignore // ignore\t`, 5],
+        ['test /* ignore */', `test${symbol} /* ignore */`, 5],
+        ['test /* do not ignore */ test', `test /* do not ignore */ test${symbol}`, 30],
+        ['test /* do not ignore */ test // ignore', `test /* do not ignore */ test${symbol} // ignore`, 30],
+      ]
+
+      for (const [before, after, jumpPosition] of tests) {
+        await replaceEditorContent(editor, before)
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, after)
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? jumpPosition : 0))
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, before)
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? jumpPosition - 1 : 0))
+      }
+    })
 
     it(`should toggle a trailing '${symbol}' with the cursor at the end of the line`, () =>
       withEditor('test', async (document, editor) => {
@@ -166,6 +196,89 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             editor,
             getTestSettings().jumpToSymbol
               ? positions.map((position) => new Position(position.line, position.line % 2 === 0 ? 6 : 11))
+              : positions
+          )
+        }
+      ))
+
+    it(`should toggle a trailing '${symbol}' on multiple lines with comments on the lines`, () =>
+      withEditor(
+        stripIndent`
+          test // ignore
+          test     // ignore
+            test // ignore
+          test // ignore // ignore
+          test /* ignore */
+          test /* do not ignore */ test
+          test /* do not ignore */ test // ignore
+        `,
+        async (document, editor) => {
+          const positions = [
+            new Position(0, 0),
+            new Position(1, 2),
+            new Position(2, 7),
+            new Position(3, 4),
+            new Position(4, 3),
+            new Position(5, 0),
+            new Position(6, 1),
+          ]
+          editor.selections = getSelectionsFromPositions(positions)
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test${symbol} // ignore
+              test${symbol}     // ignore
+                test${symbol} // ignore
+              test${symbol} // ignore // ignore
+              test${symbol} /* ignore */
+              test /* do not ignore */ test${symbol}
+              test /* do not ignore */ test${symbol} // ignore
+            `
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [
+                  new Position(0, 5),
+                  new Position(1, 5),
+                  new Position(2, 7),
+                  new Position(3, 5),
+                  new Position(4, 5),
+                  new Position(5, 30),
+                  new Position(6, 30),
+                ]
+              : positions
+          )
+
+          await commands.executeCommand(command)
+
+          assertTextEqual(
+            document,
+            stripIndent`
+              test // ignore
+              test     // ignore
+                test // ignore
+              test // ignore // ignore
+              test /* ignore */
+              test /* do not ignore */ test
+              test /* do not ignore */ test // ignore
+            `
+          )
+          assertPositionsEqual(
+            editor,
+            getTestSettings().jumpToSymbol
+              ? [
+                  new Position(0, 4),
+                  new Position(1, 4),
+                  new Position(2, 6),
+                  new Position(3, 4),
+                  new Position(4, 4),
+                  new Position(5, 29),
+                  new Position(6, 29),
+                ]
               : positions
           )
         }

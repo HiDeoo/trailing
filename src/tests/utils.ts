@@ -4,12 +4,18 @@ import { commands, Position, Selection, type TextDocument, type TextEditor, wind
 
 import { commandWithNewLineSuffix, TrailingDefinitions } from '../extension'
 
+export async function getEditor(content = '') {
+  const document = await workspace.openTextDocument({ content })
+  const editor = await window.showTextDocument(document)
+
+  return { document, editor }
+}
+
 export async function withEditor(
   content: string,
   run: (doc: TextDocument, editor: TextEditor) => Promise<void> | void
 ) {
-  const document = await workspace.openTextDocument({ content })
-  const editor = await window.showTextDocument(document)
+  const { document, editor } = await getEditor(content)
 
   await run(document, editor)
 

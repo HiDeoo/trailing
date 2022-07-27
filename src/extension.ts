@@ -19,7 +19,9 @@ export const TrailingDefinitions = new Map<TrailingCommand, TrailingSymbol>([
   [`trailing.toggleComma${commandWithNewLineSuffix}`, TrailingSymbol.Comma],
 ])
 
-const leadRegExp = /^(?<lead>\s*)/
+const leadingWhiteSpacesRegExp = /^(?<lead>\s*)/
+// https://regex101.com/r/Om2ioU/1
+const trailingCommentsRegExp = /(\S)\s*(?:(?:\/\/.*|(?:(\/\*)(?!.*\2).*\*\/)))*\s*$/
 
 export function activate(context: ExtensionContext) {
   for (const [command, symbol] of TrailingDefinitions) {
@@ -70,7 +72,8 @@ async function toggle(symbol: TrailingSymbol, addNewLine: boolean) {
       edit.lastHandledLineIndex = lineIndex
 
       const textLine = editor.document.lineAt(selection.active.line)
-      const trimmedText = textLine.text.trimEnd()
+      const matches = textLine.text.match(trailingCommentsRegExp)
+      const trimmedText = textLine.text.slice(0, (matches?.index ?? 0) + 1)
       const trimmedDelta = -1 * (textLine.text.length - trimmedText.length)
 
       const line: Line = {
@@ -94,7 +97,7 @@ function addSymbol(edit: Edit, line: Line, selection: Selection, builder: TextEd
   let lead = ''
 
   if (edit.addNewLine) {
-    const matches = line.trimmedText.match(leadRegExp)
+    const matches = line.trimmedText.match(leadingWhiteSpacesRegExp)
 
     if (matches?.groups?.lead && matches.groups.lead.length > 0) {
       lead = matches.groups.lead
@@ -114,6 +117,7 @@ function addSymbol(edit: Edit, line: Line, selection: Selection, builder: TextEd
         selection.active.with({
           character: line.textLine.range.end.character + edit.symbol.length + line.trimmedDelta,
         })
+
     edit.newSelections.push(new Selection(newPosition, newPosition))
   } else {
     if (edit.addNewLine) {
@@ -157,6 +161,7 @@ function removeSymbol(edit: Edit, line: Line, selection: Selection, builder: Tex
       // If the selection range is empty and the cursor is at the end of the line, we need to adjust the cursor position
       // to account for the removed symbol.
       const newPosition = selection.end.translate({ characterDelta: -1 * edit.symbol.length })
+
       edit.newSelections.push(line.trimmedDelta === 0 ? new Selection(newPosition, newPosition) : selection)
     } else if (selection.end.character === line.textLine.text.length) {
       // If the cursor is at the end of the line, we need to adjust the cursor position to account for the removed
