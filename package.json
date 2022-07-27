@@ -1,8 +1,13 @@
 {
   "name": "trailing",
   "displayName": "Trailing",
-  "description": "Toggle trailing symbols",
+  "description": "Toggle trailing symbols: commas, semicolons and colons.",
+  "homepage": "https://github.com/HiDeoo/trailing",
   "version": "0.0.1",
+  "author": "HiDeoo",
+  "publisher": "hideoo",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
   "main": "./dist/extension.js",
   "browser": "./dist/extension.js",
   "scripts": {
@@ -166,6 +171,30 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "toggle",
+    "trailing",
+    "symbols",
+    "comma",
+    "semicolon",
+    "colon"
+  ],
+  "galleryBanner": {
+    "color": "#7a8194",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://github.com/HiDeoo/trailing/workflows/integration/badge.svg",
+      "href": "https://github.com/HiDeoo/trailing/actions/workflows/integration.yml",
+      "description": "Integration Status"
+    },
+    {
+      "url": "https://badgen.net/github/license/hideoo/trailing",
+      "href": "https://github.com/HiDeoo/trailing/blob/main/LICENSE",
+      "description": "License"
+    }
+  ],
   "packageManager": "pnpm@7.4.0",
   "prettier": "@hideoo/prettier-config",
   "lint-staged": {
@@ -175,5 +204,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/HiDeoo/trailing"
+  },
+  "bugs": {
+    "url": "https://github.com/HiDeoo/trailing/issues"
   }
 }
