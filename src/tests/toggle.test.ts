@@ -60,6 +60,19 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
       }
     })
 
+    it(`should toggle a trailing '${symbol}' with an emoji in the line`, () =>
+      withEditor('test 🎉 test', async (document, editor, content) => {
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, `${content}${symbol}`)
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 13 : 0))
+
+        await commands.executeCommand(command)
+
+        assertTextEqual(document, content)
+        assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 12 : 0))
+      }))
+
     it(`should toggle a trailing '${symbol}' with the cursor at the end of the line`, () =>
       withEditor('test', async (document, editor, content) => {
         let position = new Position(0, 4)
