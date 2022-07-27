@@ -22,6 +22,7 @@
     "vscode:prepublish": "pnpm package",
     "prepare": "husky install"
   },
+  "icon": "assets/icon.png",
   "activationEvents": [
     "onCommand:trailing.toggleComma",
     "onCommand:trailing.toggleCommaWithNewLine",
@@ -165,5 +166,9 @@
   "lint-staged": {
     "**/*": "prettier -w -u --cache",
     "**/*.ts": "eslint --max-warnings=0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/trailing"
   }
 }
