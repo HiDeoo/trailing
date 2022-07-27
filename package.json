@@ -47,6 +47,18 @@
           "type": "boolean"
         }
       }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "trailing.toggleComma",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleCommaWithNewLine",
+          "when": "!activeEditorIsReadonly"
+        }
+      ]
     }
   },
   "devDependencies": {
