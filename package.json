@@ -62,7 +62,7 @@
       "title": "Trailing",
       "properties": {
         "trailing.jumpToSymbol": {
-          "default": false,
+          "default": true,
           "description": "// TODO",
           "scope": "language-overridable",
           "type": "boolean"
