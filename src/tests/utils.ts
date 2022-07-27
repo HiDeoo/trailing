@@ -13,11 +13,11 @@ export async function getEditor(content = '') {
 
 export async function withEditor(
   content: string,
-  run: (doc: TextDocument, editor: TextEditor) => Promise<void> | void
+  run: (doc: TextDocument, editor: TextEditor, content: string) => Promise<void> | void
 ) {
   const { document, editor } = await getEditor(content)
 
-  await run(document, editor)
+  await run(document, editor, content)
 
   return commands.executeCommand('workbench.action.closeAllEditors')
 }

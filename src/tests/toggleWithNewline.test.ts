@@ -25,7 +25,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 1
           test 2
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           await commands.executeCommand(command)
 
           assertTextEqual(
@@ -48,13 +48,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test 2
-            `
-          )
+          assertTextEqual(document, content)
           assertPositionEqual(editor, getTestSettings().jumpToSymbol ? new Position(0, 6) : new Position(0, 0))
 
           await replaceEditorContent(editor, '\ttest 1\n\ttest 2')
@@ -116,7 +110,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 1
           test 2
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           let position = new Position(0, 6)
           editor.selection = new Selection(position, position)
 
@@ -145,13 +139,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test 2
-            `
-          )
+          assertTextEqual(document, content)
           assertPositionEqual(editor, new Position(0, 6))
 
           await replaceEditorContent(editor, '  test 1\n  test 2')
@@ -179,7 +167,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 1
           test 2
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           let selection = new Selection(new Position(0, 1), new Position(0, 3))
           editor.selection = selection
 
@@ -210,13 +198,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test 2
-            `
-          )
+          assertTextEqual(document, content)
           getTestSettings().jumpToSymbol
             ? assertPositionEqual(editor, new Position(0, 6))
             : assertSelectionEqual(editor, selection)
@@ -249,7 +231,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 1
           test 2
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           let selection = new Selection(new Position(0, 0), new Position(0, 6))
           editor.selection = selection
 
@@ -280,13 +262,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test 2
-            `
-          )
+          assertTextEqual(document, content)
           getTestSettings().jumpToSymbol
             ? assertPositionEqual(editor, new Position(0, 6))
             : assertSelectionEqual(editor, new Selection(new Position(0, 0), new Position(0, 6)))
@@ -316,7 +292,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
       ))
 
     it(`should toggle a trailing '${symbol}' with extra whitespaces at the end`, () =>
-      withEditor('test 1   \ntest 2', async (document, editor) => {
+      withEditor('test 1   \ntest 2', async (document, editor, content) => {
         await commands.executeCommand(command)
 
         assertTextEqual(document, `test 1${symbol}   \n\ntest 2`)
@@ -326,7 +302,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, `test 1   \ntest 2`)
+        assertTextEqual(document, content)
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 6 : 0))
 
         await replaceEditorContent(editor, '\ttest 1   \n\ttest 2')
@@ -376,19 +352,18 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1${symbol}
+          const expectedContent = stripIndent`
+            test 1${symbol}
 
-              test test 2
-              test 3${symbol}
+            test test 2
+            test 3${symbol}
 
-              test test 4${symbol}
+            test test 4${symbol}
 
-              test test 5
-            `
-          )
+            test test 5
+          `
+
+          assertTextEqual(document, expectedContent)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -401,19 +376,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-
-              test test 2
-              test 3
-
-              test test 4
-
-              test test 5
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol ? [new Position(0, 6), new Position(3, 6), new Position(5, 11)] : positions
@@ -461,18 +424,17 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1${symbol}
+          const expectedContent = stripIndent`
+            test 1${symbol}
 
-              test test 2${symbol}
+            test test 2${symbol}
 
-              test 3${symbol}
+            test 3${symbol}
 
-              test test 4
-            `
-          )
+            test test 4
+          `
+
+          assertTextEqual(document, expectedContent)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -485,18 +447,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-
-              test test 2
-
-              test 3
-
-              test test 4
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           assertPositionsEqual(editor, [new Position(0, 6), new Position(2, 11), new Position(4, 6)])
 
           await replaceEditorContent(editor, '\ttest 1\n\ttest test 2\n\ttest 3\n\ttest test 4')
@@ -548,44 +499,33 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          selections = [
+          let expectedSelections = [
             new Selection(new Position(0, 0), new Position(0, 2)),
             new Selection(new Position(2, 1), new Position(2, 1)),
             new Selection(new Position(4, 1), new Position(4, 7)),
           ]
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test test 1${symbol}
+          const expectedContent = stripIndent`
+            test test 1${symbol}
 
-              test 2${symbol}
+            test 2${symbol}
 
-              test test 3${symbol}
+            test test 3${symbol}
 
-              test 4
-            `
-          )
+            test 4
+          `
+
+          assertTextEqual(document, expectedContent)
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(1, 0), new Position(3, 0), new Position(5, 0)])
-            : assertSelectionsEqual(editor, selections)
+            : assertSelectionsEqual(editor, expectedSelections)
 
+          selections = expectedSelections
           editor.selections = selections
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test test 1
-
-              test 2
-
-              test test 3
-
-              test 4
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 11), new Position(2, 6), new Position(4, 11)])
             : assertSelectionsEqual(editor, selections)
@@ -601,7 +541,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          selections = [
+          expectedSelections = [
             new Selection(new Position(0, 0), new Position(0, 4)),
             new Selection(new Position(2, 1), new Position(2, 1)),
             new Selection(new Position(4, 1), new Position(4, 7)),
@@ -610,8 +550,9 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           assertTextEqual(document, `\ttest 1${symbol}\n\t\n\ttest 2${symbol}\n\t\n\ttest 3${symbol}\n\t\n\ttest 4`)
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(1, 1), new Position(3, 1), new Position(5, 1)])
-            : assertSelectionsEqual(editor, selections)
+            : assertSelectionsEqual(editor, expectedSelections)
 
+          selections = expectedSelections
           editor.selections = selections
 
           await commands.executeCommand(command)
@@ -642,46 +583,34 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          selections = [
+          let expectedSelections = [
             new Selection(new Position(0, 0), new Position(0, 6)),
             new Selection(new Position(3, 0), new Position(3, 6)),
             new Selection(new Position(5, 0), new Position(5, 11)),
           ]
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1${symbol}
+          const expectedContent = stripIndent`
+            test 1${symbol}
 
-              test test 2
-              test 3${symbol}
+            test test 2
+            test 3${symbol}
 
-              test test 4${symbol}
+            test test 4${symbol}
 
-              test test 5
-            `
-          )
+            test test 5
+          `
+
+          assertTextEqual(document, expectedContent)
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(1, 0), new Position(4, 0), new Position(6, 0)])
-            : assertSelectionsEqual(editor, selections)
+            : assertSelectionsEqual(editor, expectedSelections)
 
+          selections = expectedSelections
           editor.selections = selections
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-
-              test test 2
-              test 3
-
-              test test 4
-
-              test test 5
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 6), new Position(3, 6), new Position(5, 11)])
             : assertSelectionsEqual(editor, selections)
@@ -697,7 +626,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          selections = [
+          expectedSelections = [
             new Selection(new Position(0, 0), new Position(0, 6)),
             new Selection(new Position(3, 0), new Position(3, 6)),
             new Selection(new Position(5, 0), new Position(5, 11)),
@@ -709,8 +638,9 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(1, 1), new Position(4, 1), new Position(6, 1)])
-            : assertSelectionsEqual(editor, selections)
+            : assertSelectionsEqual(editor, expectedSelections)
 
+          selections = expectedSelections
           editor.selections = selections
 
           await commands.executeCommand(command)
@@ -843,24 +773,23 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           positions = positions.map((position, index) => new Position(position.line + 1 * index, position.character))
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test${symbol} // ignore
+          const expectedContent = stripIndent`
+            test${symbol} // ignore
 
-              test${symbol}     // ignore
+            test${symbol}     // ignore
 
-              test${symbol} // ignore // ignore
+            test${symbol} // ignore // ignore
 
-              test${symbol} /* ignore */
+            test${symbol} /* ignore */
 
-              test /* do not ignore */ test${symbol}
+            test /* do not ignore */ test${symbol}
 
-              test /* do not ignore */ test${symbol} // ignore
+            test /* do not ignore */ test${symbol} // ignore
 
-              test
-            `
-          )
+            test
+          `
+
+          assertTextEqual(document, expectedContent)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -879,24 +808,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test // ignore
-
-              test     // ignore
-
-              test // ignore // ignore
-
-              test /* ignore */
-
-              test /* do not ignore */ test
-
-              test /* do not ignore */ test // ignore
-
-              test
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -931,41 +843,32 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          selections = [
+          let expectedSelections = [
             new Selection(new Position(0, 0), new Position(0, 4)),
             new Selection(new Position(0, 6), new Position(0, 10)),
             new Selection(new Position(0, 12), new Position(0, 16)),
             new Selection(new Position(2, 2), new Position(2, 4)),
           ]
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test1 test2 test3${symbol}
+          const expectedContent = stripIndent`
+            test1 test2 test3${symbol}
 
-              test4 test5 test6${symbol}
+            test4 test5 test6${symbol}
 
-              test7 test8 test9
-            `
-          )
+            test7 test8 test9
+          `
+
+          assertTextEqual(document, expectedContent)
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(1, 0), new Position(3, 0)])
-            : assertSelectionsEqual(editor, selections)
+            : assertSelectionsEqual(editor, expectedSelections)
 
+          selections = expectedSelections
           editor.selections = selections
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test1 test2 test3
-
-              test4 test5 test6
-
-              test7 test8 test9
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 17), new Position(2, 17)])
             : assertSelectionsEqual(editor, selections)
@@ -982,7 +885,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          selections = [
+          expectedSelections = [
             new Selection(new Position(0, 0), new Position(0, 4)),
             new Selection(new Position(0, 6), new Position(0, 10)),
             new Selection(new Position(0, 12), new Position(0, 16)),
@@ -995,8 +898,9 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           )
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(1, 1), new Position(3, 1)])
-            : assertSelectionsEqual(editor, selections)
+            : assertSelectionsEqual(editor, expectedSelections)
 
+          selections = expectedSelections
           editor.selections = selections
 
           await commands.executeCommand(command)
@@ -1023,16 +927,15 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(2, 2)]
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test1 test2 test3${symbol}
+          const expectedContent = stripIndent`
+            test1 test2 test3${symbol}
 
-              test4 test5 test6${symbol}
+            test4 test5 test6${symbol}
 
-              test7 test8 test9
-            `
-          )
+            test7 test8 test9
+          `
+
+          assertTextEqual(document, expectedContent)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol ? [new Position(1, 0), new Position(3, 0)] : positions
@@ -1042,16 +945,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test1 test2 test3
-
-              test4 test5 test6
-
-              test7 test8 test9
-            `
-          )
+          assertTextEqual(document, expectedContent.replaceAll(symbol, ''))
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol ? [new Position(0, 17), new Position(2, 17)] : positions

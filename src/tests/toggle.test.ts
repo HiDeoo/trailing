@@ -20,15 +20,15 @@ import {
 function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: TrailingSymbol) {
   describe(`Trailing Symbol '${symbol}'`, () => {
     it(`should toggle a trailing '${symbol}'`, () =>
-      withEditor('test', async (document, editor) => {
+      withEditor('test', async (document, editor, content) => {
         await commands.executeCommand(command)
 
-        assertTextEqual(document, `test${symbol}`)
+        assertTextEqual(document, `${content}${symbol}`)
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 5 : 0))
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, 'test')
+        assertTextEqual(document, content)
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 4 : 0))
       }))
 
@@ -61,13 +61,13 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
     })
 
     it(`should toggle a trailing '${symbol}' with the cursor at the end of the line`, () =>
-      withEditor('test', async (document, editor) => {
+      withEditor('test', async (document, editor, content) => {
         let position = new Position(0, 4)
         editor.selection = new Selection(position, position)
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, `test${symbol}`)
+        assertTextEqual(document, `${content}${symbol}`)
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 5 : 4))
 
         position = new Position(0, 5)
@@ -75,18 +75,18 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, 'test')
+        assertTextEqual(document, content)
         assertPositionEqual(editor, new Position(0, 4))
       }))
 
     it(`should toggle a trailing '${symbol}' with a line partially selected`, () =>
-      withEditor('test', async (document, editor) => {
+      withEditor('test', async (document, editor, content) => {
         let selection = new Selection(new Position(0, 0), new Position(0, 2))
         editor.selection = selection
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, `test${symbol}`)
+        assertTextEqual(document, `${content}${symbol}`)
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 5))
           : assertSelectionEqual(editor, selection)
@@ -96,20 +96,20 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, 'test')
+        assertTextEqual(document, content)
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 4))
           : assertSelectionEqual(editor, selection)
       }))
 
     it(`should toggle a trailing '${symbol}' with a line entirely selected`, () =>
-      withEditor('test', async (document, editor) => {
+      withEditor('test', async (document, editor, content) => {
         let selection = new Selection(new Position(0, 0), new Position(0, 4))
         editor.selection = selection
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, `test${symbol}`)
+        assertTextEqual(document, `${content}${symbol}`)
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 5))
           : assertSelectionEqual(editor, selection)
@@ -119,14 +119,14 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, 'test')
+        assertTextEqual(document, content)
         getTestSettings().jumpToSymbol
           ? assertPositionEqual(editor, new Position(0, 4))
           : assertSelectionEqual(editor, new Selection(new Position(0, 0), new Position(0, 4)))
       }))
 
     it(`should toggle a trailing '${symbol}' with extra whitespaces at the end`, () =>
-      withEditor('test   ', async (document, editor) => {
+      withEditor('test   ', async (document, editor, content) => {
         await commands.executeCommand(command)
 
         assertTextEqual(document, `test${symbol}   `)
@@ -134,12 +134,12 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, 'test   ')
+        assertTextEqual(document, content)
         assertPositionEqual(editor, new Position(0, getTestSettings().jumpToSymbol ? 4 : 0))
       }))
 
     it(`should toggle a trailing '${symbol}' on empty lines`, () =>
-      withEditor('', async (document, editor) => {
+      withEditor('', async (document, editor, content) => {
         await commands.executeCommand(command)
 
         assertTextEqual(document, symbol)
@@ -147,7 +147,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
         await commands.executeCommand(command)
 
-        assertTextEqual(document, '')
+        assertTextEqual(document, content)
         assertPositionEqual(editor, new Position(0, 0))
       }))
 
@@ -159,7 +159,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 3
           test test 4
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const positions = [new Position(0, 0), new Position(2, 2), new Position(3, 7)]
           editor.selections = getSelectionsFromPositions(positions)
 
@@ -183,15 +183,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test test 2
-              test 3
-              test test 4
-            `
-          )
+          assertTextEqual(document, content)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -212,7 +204,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test /* do not ignore */ test
           test /* do not ignore */ test // ignore
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const positions = [
             new Position(0, 0),
             new Position(1, 2),
@@ -255,18 +247,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test // ignore
-              test     // ignore
-                test // ignore
-              test // ignore // ignore
-              test /* ignore */
-              test /* do not ignore */ test
-              test /* do not ignore */ test // ignore
-            `
-          )
+          assertTextEqual(document, content)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -292,7 +273,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 3
           test test 4
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const positions = [new Position(0, 6), new Position(1, 11), new Position(3, 11)]
           editor.selections = getSelectionsFromPositions(positions)
 
@@ -320,15 +301,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test test 2
-              test 3
-              test test 4
-            `
-          )
+          assertTextEqual(document, content)
           assertPositionsEqual(
             editor,
             positions.map((position) => new Position(position.line, position.line % 2 === 0 ? 6 : 11))
@@ -344,7 +317,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test test 3
           test 4
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const selections = [
             new Selection(new Position(0, 0), new Position(0, 2)),
             new Selection(new Position(1, 1), new Position(1, 1)),
@@ -375,15 +348,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test test 1
-              test 2
-              test test 3
-              test 4
-            `
-          )
+          assertTextEqual(document, content)
           assertSelectionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -404,7 +369,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test 3
           test test 4
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const selections = [
             new Selection(new Position(0, 0), new Position(0, 6)),
             new Selection(new Position(2, 0), new Position(2, 6)),
@@ -435,15 +400,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test 1
-              test test 2
-              test 3
-              test test 4
-            `
-          )
+          assertTextEqual(document, content)
           assertSelectionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -464,7 +421,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test test 3
           test 4,
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
           editor.selections = getSelectionsFromPositions(positions)
 
@@ -488,15 +445,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test test 1
-              test 2,
-              test test 3
-              test 4,
-            `
-          )
+          assertTextEqual(document, content)
           assertPositionsEqual(
             editor,
             getTestSettings().jumpToSymbol
@@ -512,7 +461,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test1 test2 test3
           test4 test5 test6
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const selections = [
             new Selection(new Position(0, 0), new Position(0, 4)),
             new Selection(new Position(0, 6), new Position(0, 10)),
@@ -536,13 +485,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test1 test2 test3
-              test4 test5 test6
-            `
-          )
+          assertTextEqual(document, content)
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 17), new Position(1, 17)])
             : assertSelectionsEqual(editor, selections)
@@ -555,7 +498,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test1 test2 test3
           test4 test5 test6
         `,
-        async (document, editor) => {
+        async (document, editor, content) => {
           const positions = [new Position(0, 0), new Position(0, 6), new Position(0, 12), new Position(1, 2)]
           editor.selections = getSelectionsFromPositions(positions)
 
@@ -574,13 +517,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
           await commands.executeCommand(command)
 
-          assertTextEqual(
-            document,
-            stripIndent`
-              test1 test2 test3
-              test4 test5 test6
-            `
-          )
+          assertTextEqual(document, content)
           getTestSettings().jumpToSymbol
             ? assertPositionsEqual(editor, [new Position(0, 17), new Position(1, 17)])
             : assertPositionsEqual(editor, positions)
