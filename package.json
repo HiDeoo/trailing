@@ -130,6 +130,11 @@
       ]
     }
   },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
   "devDependencies": {
     "@hideoo/eslint-config": "0.3.0",
     "@hideoo/prettier-config": "0.0.1",
