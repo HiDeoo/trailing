@@ -48,6 +48,18 @@
         }
       }
     },
+    "keybindings": [
+      {
+        "command": "trailing.toggleComma",
+        "key": "ctrl+,",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleCommaWithNewLine",
+        "key": "ctrl+alt+,",
+        "when": "editorTextFocus && !editorReadonly"
+      }
+    ],
     "menus": {
       "commandPalette": [
         {
