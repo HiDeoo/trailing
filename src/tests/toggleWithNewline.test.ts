@@ -656,10 +656,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
       withEditor(
         stripIndent`
           test test 1
-          test 2,
+          test 2${symbol}
           test test 3
-          test 4,
-          test test 5,
+          test 4${symbol}
+          test test 5${symbol}
         `,
         async (document, editor) => {
           let positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
@@ -678,7 +678,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               test test 3${symbol}
 
               test 4
-              test test 5,
+              test test 5${symbol}
             `
           )
           assertPositionsEqual(
@@ -703,7 +703,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
 
               test 4${symbol}
 
-              test test 5,
+              test test 5${symbol}
             `
           )
           assertPositionsEqual(
@@ -713,7 +713,7 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               : [new Position(0, 0), new Position(2, 2), new Position(4, 7), new Position(6, 3)]
           )
 
-          await replaceEditorContent(editor, '\ttest test 1\n\ttest 2,\n\t\ttest test 3\n\ttest 4,')
+          await replaceEditorContent(editor, `\ttest test 1\n\ttest 2${symbol}\n\t\ttest test 3\n\ttest 4${symbol}`)
 
           positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]
           editor.selections = getSelectionsFromPositions(positions)

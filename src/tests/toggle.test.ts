@@ -430,9 +430,9 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
       withEditor(
         stripIndent`
           test test 1
-          test 2,
+          test 2${symbol}
           test test 3
-          test 4,
+          test 4${symbol}
         `,
         async (document, editor, content) => {
           const positions = [new Position(0, 0), new Position(1, 2), new Position(2, 7), new Position(3, 3)]

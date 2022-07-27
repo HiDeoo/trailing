@@ -35,6 +35,14 @@
       {
         "command": "trailing.toggleCommaWithNewLine",
         "title": "// TODO"
+      },
+      {
+        "command": "trailing.toggleSemicolon",
+        "title": "// TODO"
+      },
+      {
+        "command": "trailing.toggleSemicolonWithNewLine",
+        "title": "// TODO"
       }
     ],
     "configuration": {
@@ -58,6 +66,16 @@
         "command": "trailing.toggleCommaWithNewLine",
         "key": "ctrl+alt+,",
         "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleSemicolon",
+        "key": "ctrl+;",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleSemicolonWithNewLine",
+        "key": "ctrl+alt+;",
+        "when": "editorTextFocus && !editorReadonly"
       }
     ],
     "menus": {
@@ -68,6 +86,14 @@
         },
         {
           "command": "trailing.toggleCommaWithNewLine",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleSemicolon",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleSemicolonWithNewLine",
           "when": "!activeEditorIsReadonly"
         }
       ]

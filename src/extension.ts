@@ -10,6 +10,7 @@ import {
 
 export enum TrailingSymbol {
   Comma = ',',
+  Semicolon = ';',
 }
 
 export const commandWithNewLineSuffix = 'WithNewLine'
@@ -17,6 +18,8 @@ export const commandWithNewLineSuffix = 'WithNewLine'
 export const TrailingDefinitions = new Map<TrailingCommand, TrailingSymbol>([
   ['trailing.toggleComma', TrailingSymbol.Comma],
   [`trailing.toggleComma${commandWithNewLineSuffix}`, TrailingSymbol.Comma],
+  ['trailing.toggleSemicolon', TrailingSymbol.Semicolon],
+  [`trailing.toggleSemicolon${commandWithNewLineSuffix}`, TrailingSymbol.Semicolon],
 ])
 
 const leadingWhiteSpacesRegExp = /^(?<lead>\s*)/
