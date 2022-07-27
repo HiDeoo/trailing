@@ -68,7 +68,7 @@
       "properties": {
         "trailing.jumpToSymbol": {
           "default": true,
-          "description": "Controls whether the cursor should jump to the trailing symbol when toggled.",
+          "description": "Controls whether the cursor should jump to the trailing symbol (or added new line) when toggled.",
           "scope": "language-overridable",
           "type": "boolean"
         }
