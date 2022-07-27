@@ -1,7 +1,7 @@
 {
   "name": "trailing",
   "displayName": "Trailing",
-  "description": "// TODO",
+  "description": "Toggle trailing symbols",
   "version": "0.0.1",
   "main": "./dist/extension.js",
   "browser": "./dist/extension.js",
@@ -35,27 +35,27 @@
     "commands": [
       {
         "command": "trailing.toggleComma",
-        "title": "// TODO"
+        "title": "Toggle trailing comma"
       },
       {
         "command": "trailing.toggleCommaWithNewLine",
-        "title": "// TODO"
+        "title": "Toggle trailing comma and add new line"
       },
       {
         "command": "trailing.toggleSemicolon",
-        "title": "// TODO"
+        "title": "Toggle trailing semicolon"
       },
       {
         "command": "trailing.toggleSemicolonWithNewLine",
-        "title": "// TODO"
+        "title": "Toggle trailing semicolon and add new line"
       },
       {
         "command": "trailing.toggleColon",
-        "title": "// TODO"
+        "title": "Toggle trailing colon"
       },
       {
         "command": "trailing.toggleColonWithNewLine",
-        "title": "// TODO"
+        "title": "Toggle trailing colon and add new line"
       }
     ],
     "configuration": {
@@ -63,7 +63,7 @@
       "properties": {
         "trailing.jumpToSymbol": {
           "default": true,
-          "description": "// TODO",
+          "description": "Controls whether the cursor should jump to the trailing symbol when toggled.",
           "scope": "language-overridable",
           "type": "boolean"
         }
