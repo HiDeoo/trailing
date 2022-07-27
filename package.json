@@ -67,32 +67,32 @@
     "keybindings": [
       {
         "command": "trailing.toggleComma",
-        "key": "ctrl+[Comma]",
+        "key": "ctrl+,",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleCommaWithNewLine",
-        "key": "ctrl+alt+[Comma]",
+        "key": "ctrl+alt+,",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleSemicolon",
-        "key": "ctrl+[Semicolon]",
+        "key": "ctrl+;",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleSemicolonWithNewLine",
-        "key": "ctrl+alt+[Semicolon]",
+        "key": "ctrl+alt+;",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleColon",
-        "key": "ctrl+shift+[Semicolon]",
+        "key": "ctrl+shift+;",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleColonWithNewLine",
-        "key": "ctrl+shift+alt+[Semicolon]",
+        "key": "ctrl+shift+alt+;",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
