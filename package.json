@@ -24,7 +24,11 @@
   },
   "activationEvents": [
     "onCommand:trailing.toggleComma",
-    "onCommand:trailing.toggleCommaWithNewLine"
+    "onCommand:trailing.toggleCommaWithNewLine",
+    "onCommand:trailing.toggleSemicolon",
+    "onCommand:trailing.toggleSemicolonWithNewLine",
+    "onCommand:trailing.toggleColon",
+    "onCommand:trailing.toggleColonWithNewLine"
   ],
   "contributes": {
     "commands": [
