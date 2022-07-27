@@ -43,6 +43,14 @@
       {
         "command": "trailing.toggleSemicolonWithNewLine",
         "title": "// TODO"
+      },
+      {
+        "command": "trailing.toggleColon",
+        "title": "// TODO"
+      },
+      {
+        "command": "trailing.toggleColonWithNewLine",
+        "title": "// TODO"
       }
     ],
     "configuration": {
@@ -59,22 +67,32 @@
     "keybindings": [
       {
         "command": "trailing.toggleComma",
-        "key": "ctrl+,",
+        "key": "ctrl+[Comma]",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleCommaWithNewLine",
-        "key": "ctrl+alt+,",
+        "key": "ctrl+alt+[Comma]",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleSemicolon",
-        "key": "ctrl+;",
+        "key": "ctrl+[Semicolon]",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "command": "trailing.toggleSemicolonWithNewLine",
-        "key": "ctrl+alt+;",
+        "key": "ctrl+alt+[Semicolon]",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleColon",
+        "key": "ctrl+shift+[Semicolon]",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleColonWithNewLine",
+        "key": "ctrl+shift+alt+[Semicolon]",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
@@ -94,6 +112,14 @@
         },
         {
           "command": "trailing.toggleSemicolonWithNewLine",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleColon",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleColonWithNewLine",
           "when": "!activeEditorIsReadonly"
         }
       ]
