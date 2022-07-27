@@ -3,7 +3,7 @@ import path from 'node:path'
 import { glob } from 'glob'
 import Mocha from 'mocha'
 
-import { getMochaOptions, runTests } from '../mocha'
+import { getMochaOptions, runTests } from './mocha'
 
 export function run(): Promise<void> {
   return new Promise((resolve, reject) => {

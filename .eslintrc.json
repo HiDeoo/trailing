@@ -1,5 +1,13 @@
 {
   "extends": "@hideoo",
+  "overrides": [
+    {
+      "files": ["index.desktop.*", "index.web.*"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
   "rules": {
     "unicorn/prefer-node-protocol": "off"
   }

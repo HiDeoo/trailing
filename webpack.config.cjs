@@ -9,7 +9,7 @@ const webpackConfig = {
   devtool: 'nosources-source-map',
   entry: {
     extension: './src/extension.ts',
-    'test/suite/index': './src/test/suite/index.web.ts',
+    tests: './src/tests/runner.web.ts',
   },
   externals: {
     vscode: 'commonjs vscode',
