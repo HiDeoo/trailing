@@ -1,8 +1,13 @@
 {
   "name": "trailing",
   "displayName": "Trailing",
-  "description": "// TODO",
+  "description": "Toggle trailing symbols: commas, semicolons and colons.",
+  "homepage": "https://github.com/HiDeoo/trailing",
   "version": "0.0.1",
+  "author": "HiDeoo",
+  "publisher": "hideoo",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
   "main": "./dist/extension.js",
   "browser": "./dist/extension.js",
   "scripts": {
@@ -18,35 +23,123 @@
     "test:desktop": "node out/tests/index.desktop.js",
     "test:web": "node out/tests/index.web.js",
     "package": "webpack --mode production --devtool hidden-source-map",
-    "vscode:package": "vsce package",
+    "vscode:ls": "vsce ls --no-dependencies",
+    "vscode:package": "vsce package --no-dependencies",
+    "vscode:publish": "vsce publish --no-dependencies",
     "vscode:prepublish": "pnpm package",
     "prepare": "husky install"
   },
+  "icon": "assets/icon.png",
   "activationEvents": [
     "onCommand:trailing.toggleComma",
-    "onCommand:trailing.toggleCommaWithNewLine"
+    "onCommand:trailing.toggleCommaWithNewLine",
+    "onCommand:trailing.toggleSemicolon",
+    "onCommand:trailing.toggleSemicolonWithNewLine",
+    "onCommand:trailing.toggleColon",
+    "onCommand:trailing.toggleColonWithNewLine"
   ],
   "contributes": {
     "commands": [
       {
         "command": "trailing.toggleComma",
-        "title": "// TODO"
+        "title": "Toggle trailing comma"
       },
       {
         "command": "trailing.toggleCommaWithNewLine",
-        "title": "// TODO"
+        "title": "Toggle trailing comma and add new line"
+      },
+      {
+        "command": "trailing.toggleSemicolon",
+        "title": "Toggle trailing semicolon"
+      },
+      {
+        "command": "trailing.toggleSemicolonWithNewLine",
+        "title": "Toggle trailing semicolon and add new line"
+      },
+      {
+        "command": "trailing.toggleColon",
+        "title": "Toggle trailing colon"
+      },
+      {
+        "command": "trailing.toggleColonWithNewLine",
+        "title": "Toggle trailing colon and add new line"
       }
     ],
     "configuration": {
       "title": "Trailing",
       "properties": {
         "trailing.jumpToSymbol": {
-          "default": false,
-          "description": "// TODO",
+          "default": true,
+          "description": "Controls whether the cursor should jump to the trailing symbol (or added new line) when toggled.",
           "scope": "language-overridable",
           "type": "boolean"
         }
       }
+    },
+    "keybindings": [
+      {
+        "command": "trailing.toggleComma",
+        "key": "ctrl+,",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleCommaWithNewLine",
+        "key": "ctrl+alt+,",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleSemicolon",
+        "key": "ctrl+;",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleSemicolonWithNewLine",
+        "key": "ctrl+alt+;",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleColon",
+        "key": "ctrl+shift+;",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "trailing.toggleColonWithNewLine",
+        "key": "ctrl+shift+alt+;",
+        "when": "editorTextFocus && !editorReadonly"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "trailing.toggleComma",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleCommaWithNewLine",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleSemicolon",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleSemicolonWithNewLine",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleColon",
+          "when": "!activeEditorIsReadonly"
+        },
+        {
+          "command": "trailing.toggleColonWithNewLine",
+          "when": "!activeEditorIsReadonly"
+        }
+      ]
+    }
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
     }
   },
   "devDependencies": {
@@ -80,10 +173,41 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "toggle",
+    "trailing",
+    "symbols",
+    "comma",
+    "semicolon",
+    "colon"
+  ],
+  "galleryBanner": {
+    "color": "#7a8194",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://github.com/HiDeoo/trailing/workflows/integration/badge.svg",
+      "href": "https://github.com/HiDeoo/trailing/actions/workflows/integration.yml",
+      "description": "Integration Status"
+    },
+    {
+      "url": "https://badgen.net/github/license/hideoo/trailing",
+      "href": "https://github.com/HiDeoo/trailing/blob/main/LICENSE",
+      "description": "License"
+    }
+  ],
   "packageManager": "pnpm@7.4.0",
   "prettier": "@hideoo/prettier-config",
   "lint-staged": {
     "**/*": "prettier -w -u --cache",
     "**/*.ts": "eslint --max-warnings=0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/trailing"
+  },
+  "bugs": {
+    "url": "https://github.com/HiDeoo/trailing/issues"
   }
 }

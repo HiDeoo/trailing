@@ -9,7 +9,9 @@ import {
 } from 'vscode'
 
 export enum TrailingSymbol {
+  Colon = ':',
   Comma = ',',
+  Semicolon = ';',
 }
 
 export const commandWithNewLineSuffix = 'WithNewLine'
@@ -17,6 +19,10 @@ export const commandWithNewLineSuffix = 'WithNewLine'
 export const TrailingDefinitions = new Map<TrailingCommand, TrailingSymbol>([
   ['trailing.toggleComma', TrailingSymbol.Comma],
   [`trailing.toggleComma${commandWithNewLineSuffix}`, TrailingSymbol.Comma],
+  ['trailing.toggleSemicolon', TrailingSymbol.Semicolon],
+  [`trailing.toggleSemicolon${commandWithNewLineSuffix}`, TrailingSymbol.Semicolon],
+  ['trailing.toggleColon', TrailingSymbol.Colon],
+  [`trailing.toggleColon${commandWithNewLineSuffix}`, TrailingSymbol.Colon],
 ])
 
 const leadingWhiteSpacesRegExp = /^(?<lead>\s*)/
