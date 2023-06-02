@@ -151,7 +151,7 @@
     "@types/vscode": "1.69.0",
     "@types/webpack-env": "1.17.0",
     "@vscode/test-electron": "2.1.5",
-    "@vscode/test-web": "0.0.29",
+    "@vscode/test-web": "0.0.44",
     "assert": "2.0.0",
     "common-tags": "1.8.2",
     "concurrently": "7.3.0",
