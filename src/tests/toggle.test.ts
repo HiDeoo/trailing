@@ -43,6 +43,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
         ['test /* ignore */', `test${symbol} /* ignore */`, 5],
         ['test /* do not ignore */ test', `test /* do not ignore */ test${symbol}`, 30],
         ['test /* do not ignore */ test // ignore', `test /* do not ignore */ test${symbol} // ignore`, 30],
+        ['test # ignore', `test${symbol} # ignore`, 5],
+        ['test     # ignore', `test${symbol}     # ignore`, 5],
+        ['\ttest # ignore', `\ttest${symbol} # ignore`, 6],
+        ['test # ignore # ignore\t', `test${symbol} # ignore # ignore\t`, 5],
       ]
 
       for (const [before, after, jumpPosition] of tests) {
@@ -216,6 +220,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
           test /* ignore */
           test /* do not ignore */ test
           test /* do not ignore */ test // ignore
+          test # ignore
+          test     # ignore
+            test # ignore
+          test # ignore # ignore
         `,
         async (document, editor, content) => {
           const positions = [
@@ -226,6 +234,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
             new Position(4, 3),
             new Position(5, 0),
             new Position(6, 1),
+            new Position(7, 0),
+            new Position(8, 2),
+            new Position(9, 7),
+            new Position(10, 4),
           ]
           editor.selections = getSelectionsFromPositions(positions)
 
@@ -241,6 +253,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
               test${symbol} /* ignore */
               test /* do not ignore */ test${symbol}
               test /* do not ignore */ test${symbol} // ignore
+              test${symbol} # ignore
+              test${symbol}     # ignore
+                test${symbol} # ignore
+              test${symbol} # ignore # ignore
             `
           )
           assertPositionsEqual(
@@ -254,6 +270,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
                   new Position(4, 5),
                   new Position(5, 30),
                   new Position(6, 30),
+                  new Position(7, 5),
+                  new Position(8, 5),
+                  new Position(9, 7),
+                  new Position(10, 5),
                 ]
               : positions
           )
@@ -272,6 +292,10 @@ function runTestsWithCommandAndSymbol(command: TrailingCommand, symbol: Trailing
                   new Position(4, 4),
                   new Position(5, 29),
                   new Position(6, 29),
+                  new Position(7, 4),
+                  new Position(8, 4),
+                  new Position(9, 6),
+                  new Position(10, 4),
                 ]
               : positions
           )

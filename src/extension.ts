@@ -26,8 +26,8 @@ export const TrailingDefinitions = new Map<TrailingCommand, TrailingSymbol>([
 ])
 
 const leadingWhiteSpacesRegExp = /^(?<lead>\s*)/
-// https://regex101.com/r/Om2ioU/1
-const trailingCommentsRegExp = /(\S)\s*(?:(?:\/\/.*|(?:(\/\*)(?!.*\2).*\*\/)))*\s*$/
+// https://regex101.com/r/UGIyOX/1
+const trailingCommentsRegExp = /(\S)\s*(?:(?:#.*|\/\/.*|(?:(\/\*)(?!.*\2).*\*\/)))*\s*$/
 
 export function activate(context: ExtensionContext) {
   for (const [command, symbol] of TrailingDefinitions) {
